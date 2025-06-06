@@ -1,6 +1,6 @@
 public class Main {
 	public static void main(String[] args) {
-		Grafo grafo = new GrafoNaoDirecionado();
+		Grafo grafo = new GrafoNaoDirecionadoPorLista();
 
 		Vertice v1 = new Vertice("A");
 		Vertice v2 = new Vertice("B");

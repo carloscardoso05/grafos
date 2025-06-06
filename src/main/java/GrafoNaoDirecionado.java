@@ -1,107 +1,32 @@
-import java.util.*;
+public abstract class GrafoNaoDirecionado extends Grafo {
+    public int getGrau(Vertice vertice) {
+        Assert.notNull(vertice, "O vértice não pode ser nulo.");
+        return getVizinhos(vertice).size();
+    }
 
-public class GrafoNaoDirecionado extends Grafo {
-	private final Map<Vertice, List<Vertice>> adjacencias = new HashMap<>();
+    protected abstract void addArestaInternal(Aresta aresta);
 
-	@Override
-	public void addAresta(Aresta aresta) {
-		Assert.notNull(aresta);
+    @Override
+    public final void addAresta(Aresta aresta) {
+        addArestaInternal(aresta);
+        addArestaInternal(aresta.inversa());
+    }
 
-		Vertice origem = aresta.origem();
-		Vertice destino = aresta.destino();
+    public abstract void removeArestaInternal(Aresta aresta);
 
-		if (!adjacencias.containsKey(origem)) {
-			adjacencias.put(origem, new ArrayList<>());
-		}
+    @Override
+    public final void removeAresta(Aresta aresta) {
+        removeArestaInternal(aresta);
+        removeArestaInternal(aresta.inversa());
+    }
 
-		adjacencias.get(origem).add(destino);
-	}
+    @Override
+    public final int getGrauDeEntrada(Vertice vertice) {
+        return getGrau(vertice);
+    }
 
-	@Override
-	public void removeAresta(Aresta aresta) {
-		Assert.notNull(aresta);
-
-		Vertice origem = aresta.origem();
-		Vertice destino = aresta.destino();
-		if (adjacencias.containsKey(origem)) {
-			List<Vertice> vizinhos = adjacencias.get(origem);
-			vizinhos.remove(destino);
-		}
-	}
-
-	@Override
-	public void addVertice(Vertice vertice) {
-		Assert.notNull(vertice);
-
-		if (!adjacencias.containsKey(vertice)) {
-			adjacencias.put(vertice, new ArrayList<>());
-		}
-	}
-
-	@Override
-	public void removeVertice(Vertice vertice) {
-		Assert.notNull(vertice);
-
-		adjacencias.remove(vertice);
-
-		for (List<Vertice> vizinhos : adjacencias.values()) {
-			vizinhos.remove(vertice);
-		}
-	}
-
-	@Override
-	public boolean existeAresta(Aresta aresta) {
-		Assert.notNull(aresta);
-
-		Vertice origem = aresta.origem();
-		Vertice destino = aresta.destino();
-
-		return adjacencias.containsKey(origem) && adjacencias.get(origem).contains(destino);
-	}
-
-	@Override
-	public boolean existeVertice(Vertice vertice) {
-		Assert.notNull(vertice);
-
-		return adjacencias.containsKey(vertice);
-	}
-
-	@Override
-	public int grau(Vertice vertice) {
-		Assert.notNull(vertice);
-
-		return adjacencias.get(vertice).size();
-	}
-
-	@Override
-	public List<Aresta> getArestas() {
-		return adjacencias.keySet().stream().map(this::getArestas).flatMap(List::stream).toList();
-	}
-
-	@Override
-	public List<Aresta> getArestas(Vertice vertice) {
-		Assert.notNull(vertice);
-
-		return adjacencias.get(vertice).stream().map(vizinho -> new Aresta(vertice, vizinho)).toList();
-	}
-
-	@Override
-	public Set<Vertice> getVertices() {
-		return adjacencias.keySet();
-	}
-
-	@Override
-	public Set<Vertice> getVizinhos(Vertice vertice) {
-		return new HashSet<>(adjacencias.get(vertice));
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Grafo não direcionado:\n");
-		for (Map.Entry<Vertice, List<Vertice>> entry : adjacencias.entrySet()) {
-			sb.append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
-		}
-		return sb.toString();
-	}
+    @Override
+    public final int getGrauDeSaida(Vertice vertice) {
+        return getGrau(vertice);
+    }
 }

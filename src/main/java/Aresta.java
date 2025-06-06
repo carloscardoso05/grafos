@@ -4,7 +4,11 @@ public record Aresta(Vertice origem, Vertice destino, double peso) {
 	}
 
 	public Aresta {
-		Assert.notNull(origem);
-		Assert.notNull(destino);
+		Assert.notNull(origem, "Aresta não pode ter origem nula");
+		Assert.notNull(destino, "Aresta não pode ter destino nulo");
+	}
+
+	public Aresta inversa() {
+		return new Aresta(destino, origem, peso);
 	}
 }

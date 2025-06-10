@@ -3,6 +3,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,154 +15,160 @@ import org.junit.jupiter.params.provider.MethodSource;
 @ParameterizedClass
 @MethodSource("grafoProvider")
 public class GrafoNaoDirecionadoTest {
-    @Parameter
-    GrafoNaoDirecionado grafo;
+	@Parameter
+	GrafoNaoDirecionado grafo;
 
-    static Stream<GrafoNaoDirecionado> grafoProvider() {
-        return Stream.of(new GrafoNaoDirecionadoPorLista());
-    }
+	static Stream<GrafoNaoDirecionado> grafoProvider() {
+		return Stream.of(new GrafoNaoDirecionadoPorLista());
+	}
 
-    @BeforeEach
-    void beforeEach() {
-        grafo.resetar();
-    }
+	@BeforeEach
+	void beforeEach() {
+		grafo.resetar();
+	}
 
-    void addVerticeTest() {
-        Vertice verticeA = new Vertice("A");
-        Vertice verticeB = new Vertice("B");
-        Vertice verticeC = new Vertice("C");
+	@Test
+	void addArestaTest() {
+		Vertice verticeA = new Vertice("A");
+		Vertice verticeB = new Vertice("B");
 
-        grafo.addVertices(verticeA, verticeB);
+		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
-        assertTrue(grafo.existeVertice(verticeA), "Vértice A deve existir");
-        assertTrue(grafo.existeVertice(verticeB), "Vértice B deve existir");
-        assertFalse(grafo.existeVertice(verticeC), "Vértice C não deve existir");
-    }
+		grafo.addArestas(arestaAB);
 
-    @Test
-    void addVerticeViaArestaTest() {
-        Vertice verticeA = new Vertice("A");
-        Vertice verticeB = new Vertice("B");
-        Aresta arestaAB = new Aresta(verticeA, verticeB);
+		assertTrue(grafo.existeAresta(arestaAB), "Aresta entre A e B deve existir");
+		assertTrue(grafo.existeAresta(arestaAB.inversa()), "Aresta entre B e A deve existir (grafo não direcionado)");
+	}
 
-        grafo.addAresta(arestaAB);
+	@Test
+	void addArestasParalelasTest() {
+		Vertice verticeA = new Vertice("A");
+		Vertice verticeB = new Vertice("B");
 
-        assertTrue(grafo.existeVertice(verticeA), "Vértice A deve existir");
-        assertTrue(grafo.existeVertice(verticeB), "Vértice B deve existir");
-    }
+		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
-    @Test
-    void addArestaTest() {
-        Vertice verticeA = new Vertice("A");
-        Vertice verticeB = new Vertice("B");
+		grafo.addArestas(arestaAB, arestaAB);
 
-        Aresta arestaAB = new Aresta(verticeA, verticeB);
+		assumeTrue(grafo.getQuantidadeDeArestas(arestaAB) == 2, "Deve haver duas arestas entre A e B");
+		assertEquals(2, grafo.getQuantidadeDeArestas(arestaAB.inversa()), "Deve haver duas arestas entre B e A");
+	}
 
-        grafo.addArestas(arestaAB);
+	@Test
+	void removeArestaTest() {
+		Vertice verticeA = new Vertice("A");
+		Vertice verticeB = new Vertice("B");
+		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
-        assertTrue(grafo.existeAresta(arestaAB), "Aresta entre A e B deve existir");
-        assertTrue(grafo.existeAresta(arestaAB.inversa()), "Aresta entre B e A deve existir (grafo não direcionado)");
-    }
+		grafo.addAresta(arestaAB);
 
-    @Test
-    void addArestasParalelasTest() {
-        Vertice verticeA = new Vertice("A");
-        Vertice verticeB = new Vertice("B");
+		grafo.removeAresta(arestaAB);
+		assertFalse(grafo.existeAresta(arestaAB), "Aresta entre A e B não deve existir após remoção");
+		assertFalse(grafo.existeAresta(arestaAB.inversa()),
+				"Aresta entre B e A não deve existir após remoção (grafo não direcionado)");
+	}
 
-        Aresta arestaAB = new Aresta(verticeA, verticeB);
+	@Test
+	void removeArestasParalelasTest() {
+		Vertice verticeA = new Vertice("A");
+		Vertice verticeB = new Vertice("B");
 
-        grafo.addArestas(arestaAB, arestaAB);
+		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
-        assumeTrue(grafo.getQuantidadeDeArestas(arestaAB) == 2, "Deve haver duas arestas entre A e B");
-        assertTrue(grafo.getQuantidadeDeArestas(arestaAB.inversa()) == 2, "Deve haver duas arestas entre B e A");
-    }
+		grafo.addArestas(arestaAB, arestaAB);
 
-    @Test
-    void removeArestaTest() {
-        Vertice verticeA = new Vertice("A");
-        Vertice verticeB = new Vertice("B");
-        Aresta arestaAB = new Aresta(verticeA, verticeB);
+		grafo.removeArestas(arestaAB);
 
-        grafo.addAresta(arestaAB);
+		assertTrue(grafo.getQuantidadeDeArestas(arestaAB) == 1, "Deve haver uma aresta restante entre A e B");
+		assertTrue(grafo.getQuantidadeDeArestas(arestaAB.inversa()) == 1,
+				"Deve haver uma aresta restante entre B e A (grafo não direcionado)");
 
-        grafo.removeAresta(arestaAB);
-        assertFalse(grafo.existeAresta(arestaAB), "Aresta entre A e B não deve existir após remoção");
-        assertFalse(grafo.existeAresta(arestaAB.inversa()),
-                "Aresta entre B e A não deve existir após remoção (grafo não direcionado)");
-    }
+		grafo.removeArestas(arestaAB);
 
-    @Test
-    void removeArestasParalelasTest() {
-        Vertice verticeA = new Vertice("A");
-        Vertice verticeB = new Vertice("B");
+		assertFalse(grafo.existeAresta(arestaAB), "Aresta entre A e B não deve existir após remoção parcial");
+		assertFalse(grafo.existeAresta(arestaAB.inversa()),
+				"Aresta entre B e A não deve existir após remoção parcial (grafo não direcionado)");
+	}
 
-        Aresta arestaAB = new Aresta(verticeA, verticeB);
+	@Test
+	void getGrauTest() {
+		Vertice verticeA = new Vertice("A");
+		Vertice verticeB = new Vertice("B");
+		Vertice verticeC = new Vertice("C");
+		Vertice verticeD = new Vertice("D");
+		Vertice verticeE = new Vertice("E");
 
-        grafo.addArestas(arestaAB, arestaAB);
+		Aresta arestaAB = new Aresta(verticeA, verticeB);
+		Aresta arestaBC = new Aresta(verticeB, verticeC);
+		Aresta arestaEE = new Aresta(verticeE, verticeE);
 
-        grafo.removeArestas(arestaAB);
+		grafo.addVertice(verticeD);
+		grafo.addArestas(arestaAB, arestaBC, arestaEE);
 
-        assertTrue(grafo.getQuantidadeDeArestas(arestaAB) == 1, "Deve haver uma aresta restante entre A e B");
-        assertTrue(grafo.getQuantidadeDeArestas(arestaAB.inversa()) == 1,
-                "Deve haver uma aresta restante entre B e A (grafo não direcionado)");
+		assertEquals(1, grafo.getGrau(verticeA), "Grau do vértice A deve ser 1");
+		assertEquals(2, grafo.getGrau(verticeB), "Grau do vértice B deve ser 2");
+		assertEquals(1, grafo.getGrau(verticeC), "Grau do vértice C deve ser 1");
+		assertEquals(0, grafo.getGrau(verticeD), "Grau do vértice D deve ser 0");
+		assertEquals(2, grafo.getGrau(verticeE), "Grau do vértice E deve ser 2 (laço)");
+	}
 
-        grafo.removeArestas(arestaAB);
+	@Test
+	void getGrauDeEntradaESaidaTest() {
+		Vertice verticeA = new Vertice("A");
+		Vertice verticeB = new Vertice("B");
+		Vertice verticeC = new Vertice("C");
+		Vertice verticeD = new Vertice("D");
+		Vertice verticeE = new Vertice("E");
 
-        assertFalse(grafo.existeAresta(arestaAB), "Aresta entre A e B não deve existir após remoção parcial");
-        assertFalse(grafo.existeAresta(arestaAB.inversa()),
-                "Aresta entre B e A não deve existir após remoção parcial (grafo não direcionado)");
-    }
+		Aresta arestaAB = new Aresta(verticeA, verticeB);
+		Aresta arestaBC = new Aresta(verticeB, verticeC);
+		Aresta arestaEE = new Aresta(verticeE, verticeE);
 
-    @Test
-    void getGrauTest() {
-        Vertice verticeA = new Vertice("A");
-        Vertice verticeB = new Vertice("B");
-        Vertice verticeC = new Vertice("C");
-        Vertice verticeD = new Vertice("D");
+		grafo.addArestas(arestaAB, arestaBC, arestaEE);
+		grafo.addVertice(verticeD);
 
-        Aresta arestaAB = new Aresta(verticeA, verticeB);
-        Aresta arestaBC = new Aresta(verticeB, verticeC);
+		assertEquals(grafo.getGrau(verticeA), grafo.getGrauDeEntrada(verticeA),
+				"Grau de entrada do vértice A deve ser igual ao grau (grafo não direcionado)");
+		assertEquals(grafo.getGrau(verticeA), grafo.getGrauDeSaida(verticeA),
+				"Grau de saída do vértice A deve ser igual ao grau (grafo não direcionado)");
 
-        grafo.addVertice(verticeD);
-        grafo.addArestas(arestaAB, arestaBC);
+		assertEquals(grafo.getGrau(verticeB), grafo.getGrauDeEntrada(verticeB),
+				"Grau de entrada do vértice B deve ser igual ao grau (grafo não direcionado)");
+		assertEquals(grafo.getGrau(verticeB), grafo.getGrauDeSaida(verticeB),
+				"Grau de saída do vértice B deve ser igual ao grau (grafo não direcionado)");
 
-        assertEquals(1, grafo.getGrau(verticeA), "Grau do vértice A deve ser 1");
-        assertEquals(2, grafo.getGrau(verticeB), "Grau do vértice B deve ser 2");
-        assertEquals(1, grafo.getGrau(verticeC), "Grau do vértice C deve ser 1");
-        assertEquals(0, grafo.getGrau(verticeD), "Grau do vértice D deve ser 0");
-    }
+		assertEquals(grafo.getGrau(verticeC), grafo.getGrauDeEntrada(verticeC),
+				"Grau de entrada do vértice C deve ser igual ao grau (grafo não direcionado)");
+		assertEquals(grafo.getGrau(verticeC), grafo.getGrauDeSaida(verticeC),
+				"Grau de saída do vértice C deve ser igual ao grau (grafo não direcionado)");
 
-    @Test
-    void getGrauDeEntradaESaidaTest() {
-        Vertice verticeA = new Vertice("A");
-        Vertice verticeB = new Vertice("B");
-        Vertice verticeC = new Vertice("C");
-        Vertice verticeD = new Vertice("D");
+		assertEquals(grafo.getGrau(verticeD), grafo.getGrauDeEntrada(verticeD),
+				"Grau de entrada do vértice D deve ser igual ao grau (grafo não direcionado)");
+		assertEquals(grafo.getGrau(verticeD), grafo.getGrauDeSaida(verticeD),
+				"Grau de saída do vértice D deve ser igual ao grau (grafo não direcionado)");
 
-        Aresta arestaAB = new Aresta(verticeA, verticeB);
-        Aresta arestaBC = new Aresta(verticeB, verticeC);
+		assertEquals(grafo.getGrau(verticeE), grafo.getGrauDeEntrada(verticeE),
+				"Grau de entrada do vértice E deve ser igual ao grau (grafo não direcionado)");
+		assertEquals(grafo.getGrau(verticeE), grafo.getGrauDeSaida(verticeE),
+				"Grau de saída do vértice E deve ser igual ao grau (grafo não direcionado)");
+	}
 
-        grafo.addArestas(arestaAB, arestaBC);
-        grafo.addVertice(verticeD);
+	@Test
+	void getArestasTest() {
+		Vertice verticeA = new Vertice("A");
+		Vertice verticeB = new Vertice("B");
+		Vertice verticeC = new Vertice("C");
 
-        assertEquals(grafo.getGrau(verticeA), grafo.getGrauDeEntrada(verticeA),
-                "Grau de entrada do vértice A deve ser igual ao grau (grafo não direcionado)");
-        assertEquals(grafo.getGrau(verticeA), grafo.getGrauDeSaida(verticeA),
-                "Grau de saída do vértice A deve ser igual ao grau (grafo não direcionado)");
+		Aresta arestaAB = new Aresta(verticeA, verticeB);
+		Aresta arestaBC = new Aresta(verticeB, verticeC);
 
-        assertEquals(grafo.getGrau(verticeB), grafo.getGrauDeEntrada(verticeB),
-                "Grau de entrada do vértice B deve ser igual ao grau (grafo não direcionado)");
-        assertEquals(grafo.getGrau(verticeB), grafo.getGrauDeSaida(verticeB),
-                "Grau de saída do vértice B deve ser igual ao grau (grafo não direcionado)");
+		grafo.addArestas(arestaAB, arestaAB, arestaAB.inversa(), arestaBC);
 
-        assertEquals(grafo.getGrau(verticeC), grafo.getGrauDeEntrada(verticeC),
-                "Grau de entrada do vértice C deve ser igual ao grau (grafo não direcionado)");
-        assertEquals(grafo.getGrau(verticeC), grafo.getGrauDeSaida(verticeC),
-                "Grau de saída do vértice C deve ser igual ao grau (grafo não direcionado)");
+		List<Aresta> arestas = grafo.getArestas();
+		assertEquals(4, arestas.size(), "O grafo deve ter 4 arestas.");
 
-        assertEquals(grafo.getGrau(verticeD), grafo.getGrauDeEntrada(verticeD),
-                "Grau de entrada do vértice D deve ser igual ao grau (grafo não direcionado)");
-        assertEquals(grafo.getGrau(verticeD), grafo.getGrauDeSaida(verticeD),
-                "Grau de saída do vértice D deve ser igual ao grau (grafo não direcionado)");
-    }
+		assertEquals(3, grafo.getQuantidadeDeArestas(arestaAB), "Deve haver 3 arestas AB");
+		assertEquals(3, grafo.getQuantidadeDeArestas(arestaAB.inversa()), "Deve haver 3 arestas BA");
+		assertEquals(1, grafo.getQuantidadeDeArestas(arestaBC), "Deve haver uma aresta BC");
+		assertEquals(1, grafo.getQuantidadeDeArestas(arestaBC), "Deve haver uma aresta CB");
+	}
 }

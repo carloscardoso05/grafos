@@ -1,32 +1,32 @@
+import java.util.List;
+
 public abstract class GrafoNaoDirecionado extends Grafo {
-    public int getGrau(Vertice vertice) {
-        Assert.notNull(vertice, "O vértice não pode ser nulo.");
-        return getVizinhos(vertice).size();
-    }
+	public int getGrau(Vertice vertice) {
+		Assert.notNull(vertice, "O vértice não pode ser nulo.");
+		List<Aresta> arestas = getArestas(vertice);
+		int qtdArestas = arestas.size();
+		int qtdLoops = (int) arestas
+				.stream()
+				.filter(a -> a.origem().equals(a.destino()))
+				.count();
+		return qtdArestas + qtdLoops;
+	}
 
-    protected abstract void addArestaInternal(Aresta aresta);
+	@Override
+	public final int getGrauDeEntrada(Vertice vertice) {
+		return getGrau(vertice);
+	}
 
-    @Override
-    public final void addAresta(Aresta aresta) {
-        addArestaInternal(aresta);
-        addArestaInternal(aresta.inversa());
-    }
+	@Override
+	public final int getGrauDeSaida(Vertice vertice) {
+		return getGrau(vertice);
+	}
 
-    public abstract void removeArestaInternal(Aresta aresta);
-
-    @Override
-    public final void removeAresta(Aresta aresta) {
-        removeArestaInternal(aresta);
-        removeArestaInternal(aresta.inversa());
-    }
-
-    @Override
-    public final int getGrauDeEntrada(Vertice vertice) {
-        return getGrau(vertice);
-    }
-
-    @Override
-    public final int getGrauDeSaida(Vertice vertice) {
-        return getGrau(vertice);
-    }
+	@Override
+	public int getQuantidadeDeArestas(Aresta aresta) {
+		Assert.notNull(aresta, MSG_ARESTA_NULA);
+		return (int) getArestas().stream()
+								 .filter(a -> a.equals(aresta) || a.inversa().equals(aresta))
+								 .count();
+	}
 }

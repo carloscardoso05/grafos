@@ -1,0 +1,104 @@
+import java.util.*;
+
+public class DigrafoPorLista extends Digrafo{
+	private final Map<Vertice, List<Vertice>> verticesAdjacencias = new HashMap<>();
+
+	@Override
+	public void addAresta(Aresta aresta) {
+		Assert.notNull(aresta, MSG_ARESTA_NULA);
+
+		Vertice origem = aresta.origem();
+		Vertice destino = aresta.destino();
+
+		if (!verticesAdjacencias.containsKey(origem)) {
+			addVertice(origem);
+		}
+		if (!verticesAdjacencias.containsKey(destino)) {
+			addVertice(destino);
+		}
+
+		verticesAdjacencias.get(origem).add(destino);
+	}
+
+	@Override
+	public void removeAresta(Aresta aresta) {
+		Assert.notNull(aresta, MSG_ARESTA_NULA);
+
+		Vertice origem = aresta.origem();
+		Vertice destino = aresta.destino();
+		if (verticesAdjacencias.containsKey(origem)) {
+			List<Vertice> vizinhos = verticesAdjacencias.get(origem);
+			vizinhos.remove(destino);
+		}
+	}
+
+	@Override
+	public void addVertice(Vertice vertice) {
+		Assert.notNull(vertice, MSG_VERTICE_NULO);
+
+		if (!verticesAdjacencias.containsKey(vertice)) {
+			verticesAdjacencias.put(vertice, new ArrayList<>());
+		}
+	}
+
+	@Override
+	public void removeVertice(Vertice vertice) {
+		Assert.notNull(vertice, MSG_VERTICE_NULO);
+
+		verticesAdjacencias.remove(vertice);
+
+		for (List<Vertice> vizinhos : verticesAdjacencias.values()) {
+			vizinhos.remove(vertice);
+		}
+	}
+
+	@Override
+	public boolean existeAresta(Aresta aresta) {
+		return getVizinhos(aresta.origem()).contains(aresta.destino());
+	}
+
+	@Override
+	public boolean existeVertice(Vertice vertice) {
+		return verticesAdjacencias.containsKey(vertice);
+	}
+
+	@Override
+	public List<Aresta> getArestas() {
+		return verticesAdjacencias.keySet().stream().map(this::getArestas).flatMap(List::stream).toList();
+	}
+
+	@Override
+	public List<Aresta> getArestas(Vertice vertice) {
+		Assert.notNull(vertice, MSG_VERTICE_NULO);
+
+		return verticesAdjacencias.get(vertice).stream().map(vizinho -> new Aresta(vertice, vizinho)).toList();	}
+
+	@Override
+	public Set<Vertice> getVertices() {
+		return verticesAdjacencias.keySet();
+	}
+
+	@Override
+	public Set<Vertice> getVizinhos(Vertice vertice) {
+		Assert.notNull(vertice, MSG_VERTICE_NULO);
+
+		return new HashSet<>(verticesAdjacencias.get(vertice));
+	}
+
+	@Override
+	public int getGrauDeEntrada(Vertice vertice) {
+		Assert.notNull(vertice, MSG_VERTICE_NULO);
+
+		return (int) verticesAdjacencias.values().stream()
+				.flatMap(Collection::stream)
+				.filter(vertice::equals)
+				.count();
+	}
+
+	@Override
+	public int getGrauDeSaida(Vertice vertice) {
+		Assert.notNull(vertice, MSG_VERTICE_NULO);
+
+		return getVizinhos(vertice).size();
+	}
+}

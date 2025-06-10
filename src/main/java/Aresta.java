@@ -11,4 +11,9 @@ public record Aresta(Vertice origem, Vertice destino, double peso) {
 	public Aresta inversa() {
 		return new Aresta(destino, origem, peso);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Aresta{%s -> %s, %s}", origem.label(), destino.label(), peso);
+	}
 }

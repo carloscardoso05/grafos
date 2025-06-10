@@ -3,6 +3,7 @@ import java.util.Set;
 
 public abstract class Grafo {
 	protected static final String MSG_VERTICE_NULO = "Vértice não pode ser nulo";
+	protected static final String MSG_VERTICE_NAO_EXISTE = "Vértice não existe no grafo";
 	protected static final String MSG_ARESTA_NULA = "Aresta não pode ser nula";
 
 	public abstract void addAresta(Aresta aresta);
@@ -47,9 +48,7 @@ public abstract class Grafo {
 
 	public abstract boolean existeAresta(Aresta aresta);
 
-	public int getQuantidadeDeArestas(Aresta aresta) {
-		return (int) getArestas().stream().filter(aresta::equals).count();
-	}
+	public abstract int getQuantidadeDeArestas(Aresta aresta);
 
 	public abstract boolean existeVertice(Vertice vertice);
 

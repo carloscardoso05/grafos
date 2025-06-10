@@ -1,4 +1,11 @@
+package grafo.nao_orientado;
+
 import java.util.List;
+
+import grafo.Aresta;
+import grafo.Grafo;
+import grafo.Vertice;
+import grafo.util.Assert;
 
 public abstract class GrafoNaoDirecionado extends Grafo {
 	public int getGrau(Vertice vertice) {
@@ -33,7 +40,7 @@ public abstract class GrafoNaoDirecionado extends Grafo {
 	public GrafoNaoDirecionado unir(GrafoNaoDirecionado outroGrafo) {
 		Assert.notNull(outroGrafo, "O grafo a ser unido não pode ser nulo.");
 
-		Grafo grafoUnido = this.clone();
+		GrafoNaoDirecionado grafoUnido = (GrafoNaoDirecionado) this.clone();
 		grafoUnido.addVertices(outroGrafo.getVertices().toArray(Vertice[]::new));
 		grafoUnido.addArestas(outroGrafo.getArestas().toArray(Aresta[]::new));
 		return (GrafoNaoDirecionado) grafoUnido;

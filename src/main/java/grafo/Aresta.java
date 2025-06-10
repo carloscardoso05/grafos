@@ -1,3 +1,7 @@
+package grafo;
+
+import grafo.util.Assert;
+
 public record Aresta(Vertice origem, Vertice destino, double peso) {
 	public Aresta(Vertice origem, Vertice destino) {
 		this(origem, destino, 0);

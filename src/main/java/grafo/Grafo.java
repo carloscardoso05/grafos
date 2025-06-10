@@ -1,6 +1,9 @@
+package grafo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import grafo.util.Assert;
 
 public abstract class Grafo {
 	protected static final String MSG_VERTICE_NULO = "Vértice não pode ser nulo";

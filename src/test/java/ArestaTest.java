@@ -3,6 +3,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import grafo.Aresta;
+import grafo.Vertice;
+
 public class ArestaTest {
     @Test
     void criarArestaTest() {

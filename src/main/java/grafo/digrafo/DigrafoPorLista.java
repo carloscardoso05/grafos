@@ -1,7 +1,12 @@
+package grafo.digrafo;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
+import grafo.Aresta;
+import grafo.Grafo;
+import grafo.Vertice;
+import grafo.util.Assert;
+
+public class DigrafoPorLista extends Digrafo {
 	private int verticeCounter = 1;
 	private final Map<Vertice, List<Vertice>> verticesAdjacencias = new HashMap<>();
 
@@ -27,11 +32,6 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 		if (verticesAdjacencias.containsKey(origem)) {
 			List<Vertice> vizinhos = verticesAdjacencias.get(origem);
 			vizinhos.remove(destino);
-			return;
-		}
-		if (verticesAdjacencias.containsKey(destino)) {
-			List<Vertice> vizinhos = verticesAdjacencias.get(destino);
-			vizinhos.remove(origem);
 		}
 	}
 
@@ -64,41 +64,24 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 
 	@Override
 	public boolean existeAresta(Aresta aresta) {
-		Assert.notNull(aresta, MSG_ARESTA_NULA);
-
-		Vertice origem = aresta.origem();
-		Vertice destino = aresta.destino();
-
-		boolean verticesExistem = existeVertice(origem) && existeVertice(destino);
-		boolean arestaExiste = verticesAdjacencias.get(origem).contains(destino);
-		boolean arestaInversaExiste = verticesAdjacencias.get(destino).contains(origem);
-		return verticesExistem && (arestaExiste || arestaInversaExiste);
+		return getVizinhos(aresta.origem()).contains(aresta.destino());
 	}
 
 	@Override
 	public boolean existeVertice(Vertice vertice) {
-		Assert.notNull(vertice, MSG_VERTICE_NULO);
-
 		return verticesAdjacencias.containsKey(vertice);
 	}
 
 	@Override
 	public List<Aresta> getArestas() {
-		return verticesAdjacencias.entrySet().stream().flatMap(entry -> {
-			Vertice origem = entry.getKey();
-			List<Vertice> destinos = entry.getValue();
-			return destinos.stream().map(origem::formarAresta);
-		}).toList();
+		return verticesAdjacencias.keySet().stream().map(this::getArestas).flatMap(List::stream).toList();
 	}
 
 	@Override
 	public List<Aresta> getArestas(Vertice vertice) {
 		Assert.notNull(vertice, MSG_VERTICE_NULO);
 
-		return getArestas()
-				.stream()
-				.filter(aresta -> aresta.origem().equals(vertice) || aresta.destino().equals(vertice))
-				.toList();
+		return verticesAdjacencias.get(vertice).stream().map(vizinho -> new Aresta(vertice, vizinho)).toList();
 	}
 
 	@Override
@@ -108,25 +91,31 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 
 	@Override
 	public Set<Vertice> getVizinhos(Vertice vertice) {
-		return getArestas(vertice)
-				.stream()
-				.map(aresta -> aresta.origem().equals(vertice) ? aresta.destino() : aresta.origem())
-				.collect(Collectors.toSet());
+		Assert.notNull(vertice, MSG_VERTICE_NULO);
+
+		return new HashSet<>(verticesAdjacencias.get(vertice));
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Grafo não direcionado:\n");
-		for (Map.Entry<Vertice, List<Vertice>> entry : verticesAdjacencias.entrySet()) {
-			sb.append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
-		}
-		return sb.toString();
+	public int getGrauDeEntrada(Vertice vertice) {
+		Assert.notNull(vertice, MSG_VERTICE_NULO);
+
+		return (int) verticesAdjacencias.values().stream()
+				.flatMap(Collection::stream)
+				.filter(vertice::equals)
+				.count();
+	}
+
+	@Override
+	public int getGrauDeSaida(Vertice vertice) {
+		Assert.notNull(vertice, MSG_VERTICE_NULO);
+
+		return getVizinhos(vertice).size();
 	}
 
 	@Override
 	public Grafo clone() {
-		GrafoNaoDirecionadoPorLista clone = new GrafoNaoDirecionadoPorLista();
+		DigrafoPorLista clone = new DigrafoPorLista();
 		for (Vertice vertice : verticesAdjacencias.keySet()) {
 			clone.addVertice(vertice);
 		}

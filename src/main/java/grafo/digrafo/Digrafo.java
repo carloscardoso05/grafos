@@ -1,3 +1,9 @@
+package grafo.digrafo;
+
+import grafo.Aresta;
+import grafo.Grafo;
+import grafo.util.Assert;
+
 public abstract class Digrafo extends Grafo {
 
 	@Override

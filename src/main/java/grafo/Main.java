@@ -1,3 +1,7 @@
+package grafo;
+
+import grafo.nao_orientado.GrafoNaoDirecionadoPorLista;
+
 public class Main {
 	public static void main(String[] args) {
 		Grafo grafo = new GrafoNaoDirecionadoPorLista();

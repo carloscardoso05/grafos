@@ -12,6 +12,11 @@ import org.junit.jupiter.params.Parameter;
 import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import grafo.Aresta;
+import grafo.Vertice;
+import grafo.nao_orientado.GrafoNaoDirecionado;
+import grafo.nao_orientado.GrafoNaoDirecionadoPorLista;
+
 @ParameterizedClass
 @MethodSource("grafoProvider")
 public class GrafoNaoDirecionadoTest {

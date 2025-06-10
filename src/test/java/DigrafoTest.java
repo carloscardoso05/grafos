@@ -4,6 +4,11 @@ import org.junit.jupiter.params.Parameter;
 import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import grafo.Aresta;
+import grafo.Vertice;
+import grafo.digrafo.Digrafo;
+import grafo.digrafo.DigrafoPorLista;
+
 import java.util.List;
 import java.util.stream.Stream;
 

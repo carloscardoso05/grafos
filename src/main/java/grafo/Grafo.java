@@ -1,4 +1,5 @@
 package grafo;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -88,4 +89,19 @@ public abstract class Grafo {
 	}
 
 	public abstract Grafo clone();
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Grafo grafo = (Grafo) obj;
+		return getVertices().equals(grafo.getVertices()) && getArestas().equals(grafo.getArestas());
+	}
 }

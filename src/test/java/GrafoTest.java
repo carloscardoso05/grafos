@@ -11,6 +11,7 @@ import grafo.digrafo.DigrafoPorLista;
 import grafo.nao_orientado.GrafoNaoDirecionadoPorLista;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +46,7 @@ public class GrafoTest {
 				.format("O grafo deve possuir arestas antes de resetar. Tem %d arestas.", grafo.getArestas().size()));
 		assumeTrue(!grafo.getVertices().isEmpty(), () -> String
 				.format("O grafo deve possuir vértices antes de resetar. Tem %d vértices.", grafo.getVertices()
-																								 .size()));
+						.size()));
 
 		grafo.resetar();
 
@@ -168,6 +169,39 @@ public class GrafoTest {
 		grafo.removeArestas(arestaAB);
 
 		assertFalse(grafo.existeAresta(arestaAB), "Aresta entre A e B não deve existir após remoção parcial");
+	}
+
+	@Test
+	void cloneTest() {
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
+		Vertice verticeD = grafo.addVertice();
+		Aresta arestaAB = new Aresta(verticeA, verticeB);
+		Aresta arestaBC = new Aresta(verticeB, verticeC);
+		Aresta arestaDD = new Aresta(verticeD, verticeD);
+
+		grafo.addArestas(arestaAB, arestaAB.inversa(), arestaBC, arestaDD);
+
+		Grafo clone = grafo.clone();
+
+		assertNotSame(grafo, clone, "O clone não deve ser o mesmo objeto");
+		assertEquals(grafo, clone);
+		assertEquals(grafo.getVertices().size(), clone.getVertices().size(), "O número de vértices deve ser igual");
+		assertEquals(grafo.getArestas().size(), clone.getArestas().size(), "O número de arestas deve ser igual");
+
+		assertTrue(clone.existeAresta(arestaAB), "O clone deve conter a aresta original");
+		assertTrue(clone.existeAresta(arestaAB.inversa()), "O clone deve conter a aresta inversa");
+		assertTrue(clone.existeAresta(arestaBC), "O clone deve conter a aresta BC");
+		assertTrue(clone.existeAresta(arestaDD), "O clone deve conter a aresta DD");
+		assertTrue(clone.existeVertice(verticeA), "O clone deve conter o vértice A");
+		assertTrue(clone.existeVertice(verticeB), "O clone deve conter o vértice B");
+		assertTrue(clone.existeVertice(verticeC), "O clone deve conter o vértice C");
+		assertTrue(clone.existeVertice(verticeD), "O clone deve conter o vértice D");
+
+		assertIterableEquals(List.of(arestaAB, arestaAB.inversa(), arestaBC, arestaDD), clone.getArestas());
+		assertIterableEquals(Set.of(verticeA, verticeB, verticeC, verticeD), clone.getVertices(),
+				"O clone deve conter os mesmos vértices");
 	}
 
 }

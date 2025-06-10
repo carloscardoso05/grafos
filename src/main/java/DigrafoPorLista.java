@@ -36,7 +36,8 @@ public class DigrafoPorLista extends Digrafo {
 		return novoVertice;
 	}
 
-	private void addVertice(Vertice vertice) {
+	@Override
+	protected void addVertice(Vertice vertice) {
 		Assert.notNull(vertice, MSG_ARESTA_NULA);
 		if (existeVertice(vertice))
 			return;
@@ -104,5 +105,17 @@ public class DigrafoPorLista extends Digrafo {
 		Assert.notNull(vertice, MSG_VERTICE_NULO);
 
 		return getVizinhos(vertice).size();
+	}
+
+	@Override
+	public Grafo clone() {
+		DigrafoPorLista clone = new DigrafoPorLista();
+		for (Vertice vertice : verticesAdjacencias.keySet()) {
+			clone.addVertice(vertice);
+		}
+		for (Aresta aresta : getArestas()) {
+			clone.addAresta(aresta);
+		}
+		return clone;
 	}
 }

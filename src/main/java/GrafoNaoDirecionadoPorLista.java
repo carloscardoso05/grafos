@@ -42,7 +42,8 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 		return novoVertice;
 	}
 
-	private void addVertice(Vertice vertice) {
+	@Override
+	protected void addVertice(Vertice vertice) {
 		Assert.notNull(vertice, MSG_ARESTA_NULA);
 		if (existeVertice(vertice))
 			return;
@@ -121,5 +122,17 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 			sb.append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public Grafo clone() {
+		GrafoNaoDirecionadoPorLista clone = new GrafoNaoDirecionadoPorLista();
+		for (Vertice vertice : verticesAdjacencias.keySet()) {
+			clone.addVertice(vertice);
+		}
+		for (Aresta aresta : getArestas()) {
+			clone.addAresta(aresta);
+		}
+		return clone;
 	}
 }

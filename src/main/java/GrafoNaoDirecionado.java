@@ -26,7 +26,16 @@ public abstract class GrafoNaoDirecionado extends Grafo {
 	public int getQuantidadeDeArestas(Aresta aresta) {
 		Assert.notNull(aresta, MSG_ARESTA_NULA);
 		return (int) getArestas().stream()
-								 .filter(a -> a.equals(aresta) || a.inversa().equals(aresta))
-								 .count();
+				.filter(a -> a.equals(aresta) || a.inversa().equals(aresta))
+				.count();
+	}
+
+	public GrafoNaoDirecionado unir(GrafoNaoDirecionado outroGrafo) {
+		Assert.notNull(outroGrafo, "O grafo a ser unido não pode ser nulo.");
+
+		Grafo grafoUnido = this.clone();
+		grafoUnido.addVertices(outroGrafo.getVertices().toArray(Vertice[]::new));
+		grafoUnido.addArestas(outroGrafo.getArestas().toArray(Aresta[]::new));
+		return (GrafoNaoDirecionado) grafoUnido;
 	}
 }

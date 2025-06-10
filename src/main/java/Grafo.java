@@ -33,6 +33,14 @@ public abstract class Grafo {
 
 	public abstract Vertice addVertice();
 
+	protected abstract void addVertice(Vertice vertice);
+
+	protected void addVertices(Vertice... vertices) {
+		for (Vertice vertice : vertices) {
+			addVertice(vertice);
+		}
+	}
+
 	public List<Vertice> addVertices(int quantidade) {
 		Assert.positive(quantidade, "Quantidade de vértices deve ser maior que zero");
 
@@ -75,4 +83,6 @@ public abstract class Grafo {
 			removeVertice(vertice);
 		}
 	}
+
+	public abstract Grafo clone();
 }

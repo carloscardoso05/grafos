@@ -2,6 +2,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
+	private int verticeCounter = 1;
 	private final Map<Vertice, List<Vertice>> verticesAdjacencias = new HashMap<>();
 
 	@Override
@@ -35,9 +36,18 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 	}
 
 	@Override
-	public void addVertice(Vertice vertice) {
-		Assert.notNull(vertice, MSG_VERTICE_NULO);
-		verticesAdjacencias.putIfAbsent(vertice, new ArrayList<>());
+	public Vertice addVertice() {
+		Vertice novoVertice = new Vertice(verticeCounter++);
+		verticesAdjacencias.putIfAbsent(novoVertice, new ArrayList<>());
+		return novoVertice;
+	}
+
+	private void addVertice(Vertice vertice) {
+		Assert.notNull(vertice, MSG_ARESTA_NULA);
+		if (existeVertice(vertice))
+			return;
+		verticesAdjacencias.put(vertice, new ArrayList<>());
+		verticeCounter++;
 	}
 
 	@Override

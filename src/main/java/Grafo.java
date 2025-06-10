@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -30,12 +31,17 @@ public abstract class Grafo {
 		}
 	}
 
-	public abstract void addVertice(Vertice vertice);
+	public abstract Vertice addVertice();
 
-	public void addVertices(Vertice... vertices) {
-		for (Vertice vertice : vertices) {
-			addVertice(vertice);
+	public List<Vertice> addVertices(int quantidade) {
+		Assert.positive(quantidade, "Quantidade de vértices deve ser maior que zero");
+
+		List<Vertice> vertices = new ArrayList<>(quantidade);
+		for (int i = 0; i < quantidade; i++) {
+			vertices.add(addVertice());
 		}
+		return vertices;
+
 	}
 
 	public abstract void removeVertice(Vertice vertice);

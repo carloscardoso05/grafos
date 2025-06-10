@@ -7,20 +7,20 @@ public class ArestaTest {
     @Test
     void criarArestaTest() {
         assertThrows(IllegalArgumentException.class, () -> {
-            Vertice origem = new Vertice("A");
+            Vertice origem = new Vertice(1);
             new Aresta(origem, null);
         }, "Aresta com destino nulo deve lançar IllegalArgumentException");
 
         assertThrows(IllegalArgumentException.class, () -> {
-            Vertice destino = new Vertice("B");
+            Vertice destino = new Vertice(1);
             new Aresta(null, destino);
         }, "Aresta com origem nula deve lançar IllegalArgumentException");
     }
 
     @Test
     void arestaInversaTest() {
-        Vertice origem = new Vertice("A");
-        Vertice destino = new Vertice("B");
+        Vertice origem = new Vertice(1);
+        Vertice destino = new Vertice(2);
         Aresta aresta = new Aresta(origem, destino);
         Aresta inversa = new Aresta(destino, origem);
 

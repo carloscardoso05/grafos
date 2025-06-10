@@ -2,15 +2,10 @@ public class Main {
 	public static void main(String[] args) {
 		Grafo grafo = new GrafoNaoDirecionadoPorLista();
 
-		Vertice v1 = new Vertice("A");
-		Vertice v2 = new Vertice("B");
-		Vertice v3 = new Vertice("C");
-		Vertice v4 = new Vertice("D");
-
-		grafo.addVertice(v1);
-		grafo.addVertice(v2);
-		grafo.addVertice(v3);
-		grafo.addVertice(v4);
+		Vertice v1 = grafo.addVertice();
+		Vertice v2 = grafo.addVertice();
+		Vertice v3 = grafo.addVertice();
+		Vertice v4 = grafo.addVertice();
 
 		grafo.addAresta(new Aresta(v1, v2));
 		grafo.addAresta(new Aresta(v2, v3));

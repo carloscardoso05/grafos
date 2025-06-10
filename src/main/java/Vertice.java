@@ -1,6 +1,6 @@
-public record Vertice(String label) {
+public record Vertice(int id) {
     public Vertice {
-        Assert.notBlank(label, "Label do vértice não pode ser nulo ou vazio");
+        Assert.positive(id, "ID do vértice deve ser positivo");
     }
 
     public Aresta formarAresta(Vertice destino) {

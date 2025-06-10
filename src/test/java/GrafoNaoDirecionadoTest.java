@@ -29,8 +29,8 @@ public class GrafoNaoDirecionadoTest {
 
 	@Test
 	void addArestaTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
@@ -42,8 +42,8 @@ public class GrafoNaoDirecionadoTest {
 
 	@Test
 	void addArestasParalelasTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
@@ -55,8 +55,8 @@ public class GrafoNaoDirecionadoTest {
 
 	@Test
 	void removeArestaTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
 		grafo.addAresta(arestaAB);
@@ -69,8 +69,8 @@ public class GrafoNaoDirecionadoTest {
 
 	@Test
 	void removeArestasParalelasTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
@@ -91,17 +91,16 @@ public class GrafoNaoDirecionadoTest {
 
 	@Test
 	void getGrauTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-		Vertice verticeC = new Vertice("C");
-		Vertice verticeD = new Vertice("D");
-		Vertice verticeE = new Vertice("E");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
+		Vertice verticeD = grafo.addVertice();
+		Vertice verticeE = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 		Aresta arestaBC = new Aresta(verticeB, verticeC);
 		Aresta arestaEE = new Aresta(verticeE, verticeE);
 
-		grafo.addVertice(verticeD);
 		grafo.addArestas(arestaAB, arestaBC, arestaEE);
 
 		assertEquals(1, grafo.getGrau(verticeA), "Grau do vértice A deve ser 1");
@@ -113,18 +112,17 @@ public class GrafoNaoDirecionadoTest {
 
 	@Test
 	void getGrauDeEntradaESaidaTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-		Vertice verticeC = new Vertice("C");
-		Vertice verticeD = new Vertice("D");
-		Vertice verticeE = new Vertice("E");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
+		Vertice verticeD = grafo.addVertice();
+		Vertice verticeE = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 		Aresta arestaBC = new Aresta(verticeB, verticeC);
 		Aresta arestaEE = new Aresta(verticeE, verticeE);
 
 		grafo.addArestas(arestaAB, arestaBC, arestaEE);
-		grafo.addVertice(verticeD);
 
 		assertEquals(grafo.getGrau(verticeA), grafo.getGrauDeEntrada(verticeA),
 				"Grau de entrada do vértice A deve ser igual ao grau (grafo não direcionado)");
@@ -154,9 +152,9 @@ public class GrafoNaoDirecionadoTest {
 
 	@Test
 	void getArestasTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-		Vertice verticeC = new Vertice("C");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 		Aresta arestaBC = new Aresta(verticeB, verticeC);

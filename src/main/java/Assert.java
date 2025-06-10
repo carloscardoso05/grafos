@@ -30,4 +30,10 @@ public abstract class Assert {
 			throw new IllegalArgumentException(message);
 		}
 	}
+
+	public static void positive(int number, String message) {
+		if (number <= 0) {
+			throw new IllegalArgumentException(message);
+		}
+	}
 }

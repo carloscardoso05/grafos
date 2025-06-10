@@ -26,16 +26,15 @@ public class DigrafoTest {
 
 	@Test
 	void getGrauDeEntradaESaidaTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-		Vertice verticeC = new Vertice("C");
-		Vertice verticeD = new Vertice("D");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
+		Vertice verticeD = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 		Aresta arestaBC = new Aresta(verticeB, verticeC);
 
 		grafo.addArestas(arestaAB, arestaBC);
-		grafo.addVertice(verticeD);
 
 		assertEquals(0, grafo.getGrauDeEntrada(verticeA), "Grau de entrada do vértice A deve ser 0");
 		assertEquals(1, grafo.getGrauDeSaida(verticeA), "Grau de saída do vértice A deve ser 1");
@@ -52,9 +51,9 @@ public class DigrafoTest {
 
 	@Test
 	void getArestasTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-		Vertice verticeC = new Vertice("C");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 		Aresta arestaBC = new Aresta(verticeB, verticeC);

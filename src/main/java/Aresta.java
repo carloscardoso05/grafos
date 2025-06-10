@@ -14,6 +14,6 @@ public record Aresta(Vertice origem, Vertice destino, double peso) {
 
 	@Override
 	public String toString() {
-		return String.format("Aresta{%s -> %s, %s}", origem.label(), destino.label(), peso);
+		return String.format("Aresta{%s -> %s, %s}", origem.id(), destino.id(), peso);
 	}
 }

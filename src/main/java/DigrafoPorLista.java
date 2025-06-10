@@ -1,6 +1,7 @@
 import java.util.*;
 
-public class DigrafoPorLista extends Digrafo{
+public class DigrafoPorLista extends Digrafo {
+	private int verticeCounter = 1;
 	private final Map<Vertice, List<Vertice>> verticesAdjacencias = new HashMap<>();
 
 	@Override
@@ -10,12 +11,8 @@ public class DigrafoPorLista extends Digrafo{
 		Vertice origem = aresta.origem();
 		Vertice destino = aresta.destino();
 
-		if (!verticesAdjacencias.containsKey(origem)) {
-			addVertice(origem);
-		}
-		if (!verticesAdjacencias.containsKey(destino)) {
-			addVertice(destino);
-		}
+		addVertice(origem);
+		addVertice(destino);
 
 		verticesAdjacencias.get(origem).add(destino);
 	}
@@ -33,12 +30,18 @@ public class DigrafoPorLista extends Digrafo{
 	}
 
 	@Override
-	public void addVertice(Vertice vertice) {
-		Assert.notNull(vertice, MSG_VERTICE_NULO);
+	public Vertice addVertice() {
+		Vertice novoVertice = new Vertice(verticeCounter++);
+		verticesAdjacencias.putIfAbsent(novoVertice, new ArrayList<>());
+		return novoVertice;
+	}
 
-		if (!verticesAdjacencias.containsKey(vertice)) {
-			verticesAdjacencias.put(vertice, new ArrayList<>());
-		}
+	private void addVertice(Vertice vertice) {
+		Assert.notNull(vertice, MSG_ARESTA_NULA);
+		if (existeVertice(vertice))
+			return;
+		verticesAdjacencias.put(vertice, new ArrayList<>());
+		verticeCounter++;
 	}
 
 	@Override
@@ -71,7 +74,8 @@ public class DigrafoPorLista extends Digrafo{
 	public List<Aresta> getArestas(Vertice vertice) {
 		Assert.notNull(vertice, MSG_VERTICE_NULO);
 
-		return verticesAdjacencias.get(vertice).stream().map(vizinho -> new Aresta(vertice, vizinho)).toList();	}
+		return verticesAdjacencias.get(vertice).stream().map(vizinho -> new Aresta(vertice, vizinho)).toList();
+	}
 
 	@Override
 	public Set<Vertice> getVertices() {

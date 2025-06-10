@@ -27,14 +27,13 @@ public class GrafoTest {
 
 	@Test
 	void testResetar() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-		Vertice verticeC = new Vertice("C");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
 		grafo.addArestas(arestaAB, arestaAB);
-		grafo.addVertices(verticeC);
 
 		assumeTrue(!grafo.getArestas().isEmpty(), () -> String
 				.format("O grafo deve possuir arestas antes de resetar. Tem %d arestas.", grafo.getArestas().size()));
@@ -50,18 +49,16 @@ public class GrafoTest {
 
 	@Test
 	void testQuantidadeDeVertices() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-
-		grafo.addVertices(verticeA, verticeB, verticeB);
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 
 		assertEquals(2, grafo.getVertices().size(), "O grafo deve ter 2 vértices.");
 	}
 
 	@Test
 	void testQuantidadeDeArestas() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
@@ -72,9 +69,9 @@ public class GrafoTest {
 
 	@Test
 	void getArestasTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-		Vertice verticeC = new Vertice("C");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 		Aresta arestaBC = new Aresta(verticeB, verticeC);
@@ -86,11 +83,9 @@ public class GrafoTest {
 	}
 
 	void addVerticeTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-		Vertice verticeC = new Vertice("C");
-
-		grafo.addVertices(verticeA, verticeB);
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
 
 		assertTrue(grafo.existeVertice(verticeA), "Vértice A deve existir");
 		assertTrue(grafo.existeVertice(verticeB), "Vértice B deve existir");
@@ -99,8 +94,8 @@ public class GrafoTest {
 
 	@Test
 	void addVerticeViaArestaTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
 		grafo.addAresta(arestaAB);
@@ -111,10 +106,10 @@ public class GrafoTest {
 
 	@Test
 	void addArestaTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
-		Vertice verticeC = new Vertice("C");
-		Vertice verticeD = new Vertice("D");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Vertice verticeC = grafo.addVertice();
+		Vertice verticeD = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 		Aresta arestaCD = new Aresta(verticeC, verticeD);
@@ -129,8 +124,8 @@ public class GrafoTest {
 
 	@Test
 	void addArestasParalelasTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
@@ -141,8 +136,8 @@ public class GrafoTest {
 
 	@Test
 	void removeArestaTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 
 		grafo.addAresta(arestaAB);
@@ -153,8 +148,8 @@ public class GrafoTest {
 
 	@Test
 	void removeArestasParalelasTest() {
-		Vertice verticeA = new Vertice("A");
-		Vertice verticeB = new Vertice("B");
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
 
 		Aresta arestaAB = new Aresta(verticeA, verticeB);
 

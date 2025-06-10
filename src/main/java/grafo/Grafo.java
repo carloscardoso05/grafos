@@ -104,4 +104,30 @@ public abstract class Grafo {
 		Grafo grafo = (Grafo) obj;
 		return getVertices().equals(grafo.getVertices()) && getArestas().equals(grafo.getArestas());
 	}
+
+	@Override
+	public String toString() {
+		String str = """
+		%s {
+			Vértices = { %s }
+			Arestas = { %s }
+		}""";
+		return String.format(
+				str,
+				getClass().getSimpleName(),
+				String.join(
+						", ",
+						getVertices().stream()
+									 .map(Vertice::id)
+									 .map(String::valueOf)
+									 .toList()
+				),
+				String.join(
+						", ",
+						getArestas().stream()
+									.map(aresta -> "(%s, %s)".formatted(aresta.origem().id(), aresta.destino().id()))
+									.toList()
+				)
+		);
+	}
 }

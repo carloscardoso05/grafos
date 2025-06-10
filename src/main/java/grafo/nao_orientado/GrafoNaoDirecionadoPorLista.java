@@ -121,16 +121,6 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Grafo não direcionado:\n");
-		for (Map.Entry<Vertice, List<Vertice>> entry : verticesAdjacencias.entrySet()) {
-			sb.append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
-		}
-		return sb.toString();
-	}
-
-	@Override
 	public Grafo clone() {
 		GrafoNaoDirecionadoPorLista clone = new GrafoNaoDirecionadoPorLista();
 		for (Vertice vertice : verticesAdjacencias.keySet()) {

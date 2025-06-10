@@ -13,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import grafo.Aresta;
+import grafo.Grafo;
 import grafo.Vertice;
 import grafo.nao_orientado.GrafoNaoDirecionado;
 import grafo.nao_orientado.GrafoNaoDirecionadoPorLista;
@@ -173,5 +174,30 @@ public class GrafoNaoDirecionadoTest {
 		assertEquals(3, grafo.getQuantidadeDeArestas(arestaAB.inversa()), "Deve haver 3 arestas BA");
 		assertEquals(1, grafo.getQuantidadeDeArestas(arestaBC), "Deve haver uma aresta BC");
 		assertEquals(1, grafo.getQuantidadeDeArestas(arestaBC), "Deve haver uma aresta CB");
+	}
+
+	
+	@Test
+	void unirTest() {
+		GrafoNaoDirecionado grafo1 = (GrafoNaoDirecionado) grafo.clone();
+
+		Vertice verticeA = grafo.addVertice();
+		Vertice verticeB = grafo.addVertice();
+		Aresta arestaAB = new Aresta(verticeA, verticeB);
+		Aresta arestaBA = arestaAB.inversa();
+		grafo.addArestas(arestaAB, arestaBA);
+
+		Vertice verticeC = grafo1.addVertice();
+		Aresta arestaCC = new Aresta(verticeC, verticeC);
+		grafo1.addArestas(arestaCC);
+
+		GrafoNaoDirecionado grafoUnido = grafo.unir(grafo1);
+
+		assertTrue(grafoUnido.existeVertice(verticeA), "O vértice A deve existir no grafo unido");
+		assertTrue(grafoUnido.existeVertice(verticeB), "O vértice B deve existir no grafo unido");
+		assertTrue(grafoUnido.existeVertice(verticeC), "O vértice C deve existir no grafo unido");
+		assertTrue(grafoUnido.existeAresta(arestaAB), "A aresta AB deve existir no grafo unido");
+		assertTrue(grafoUnido.existeAresta(arestaBA), "A aresta BA deve existir no grafo unido");
+		assertTrue(grafoUnido.existeAresta(arestaCC), "A aresta CC deve existir no grafo unido");
 	}
 }

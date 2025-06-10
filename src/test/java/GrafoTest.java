@@ -203,5 +203,4 @@ public class GrafoTest {
 		assertIterableEquals(Set.of(verticeA, verticeB, verticeC, verticeD), clone.getVertices(),
 				"O clone deve conter os mesmos vértices");
 	}
-
 }

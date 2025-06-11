@@ -1,10 +1,13 @@
 package grafo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import grafo.util.Assert;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import grafo.digrafo.Digrafo;
+import grafo.nao_orientado.GrafoNaoDirecionado;
 
 public abstract class Grafo {
 	protected static final String MSG_VERTICE_NULO = "Vértice não pode ser nulo";
@@ -13,85 +16,212 @@ public abstract class Grafo {
 
 	public abstract void addAresta(Aresta aresta);
 
-	public void addArestas(Aresta... arestas) {
+	public final void addArestas(Aresta... arestas) {
 		for (Aresta aresta : arestas) {
 			addAresta(aresta);
 		}
 	}
 
-	public abstract void removeAresta(Aresta aresta);
+	public abstract void removeAresta(String label);
 
-	public void removeArestas(Aresta... arestas) {
-		for (Aresta aresta : arestas) {
-			removeAresta(aresta);
+	public final void removeArestas(String... labels) {
+		for (String label : labels) {
+			removeAresta(label);
 		}
 	}
 
-	public void removeTodasArestas(Aresta aresta) {
-		Assert.notNull(aresta, MSG_ARESTA_NULA);
+	public final void removeAresta(Vertice origem, Vertice destino) {
+		checkNotNull(origem, MSG_VERTICE_NULO);
+		checkNotNull(destino, MSG_VERTICE_NULO);
 
-		while (existeAresta(aresta)) {
-			removeAresta(aresta);
+		Aresta aresta = encontrarAresta(origem, destino);
+		if (aresta != null) {
+			removeAresta(aresta.label());
 		}
 	}
 
-	public abstract Vertice addVertice();
+	public final void removeTodasArestas(Vertice origem, Vertice destino) {
+		checkNotNull(origem, MSG_VERTICE_NULO);
+		checkNotNull(destino, MSG_VERTICE_NULO);
 
-	protected abstract void addVertice(Vertice vertice);
+		String[] labels = encontrarArestas(origem, destino).stream()
+				.map(Aresta::label)
+				.toArray(String[]::new);
+		removeArestas(labels);
+	}
 
-	protected void addVertices(Vertice... vertices) {
+	/**
+	 * Tenta encontrar uma aresta pelo seu label (rótulo).
+	 * <br>
+	 * Obs.: O label é o identificador único da aresta.
+	 * 
+	 * @param label o rótulo da aresta
+	 * @return a aresta com o label informado ou null se não existir
+	 */
+	public final Aresta encontrarAresta(String label) {
+		checkNotNull(label, MSG_ARESTA_NULA);
+
+		return getArestas()
+				.stream()
+				.filter(aresta -> aresta.label().equals(label))
+				.findFirst()
+				.orElse(null);
+	}
+
+	/**
+	 * Tenta encontrar uma aresta entre dois vértices.
+	 * 
+	 * @param origem
+	 * @param destino
+	 * @return a aresta entre os vértices origem e destino ou null se não existir
+	 */
+	public final Aresta encontrarAresta(Vertice origem, Vertice destino) {
+		checkNotNull(origem, MSG_VERTICE_NULO);
+		checkNotNull(destino, MSG_VERTICE_NULO);
+
+		return getArestas()
+				.stream()
+				.filter(aresta -> aresta.origem().equals(origem) && aresta.destino().equals(destino))
+				.findFirst()
+				.orElse(null);
+	}
+
+	/**
+	 * Encontra todas as arestas entre o vértice origem e o vértice destino.
+	 * <br> No caso de um grafo não orientado, são consideradas as arestas (origem -> destino) e também (destino -> origem).
+	 * <br> No caso de um grafo orientado, são consideradas apenas as arestas (origem -> destino).
+	 * @param origem
+	 * @param destino
+	 * @return um conjunto de arestas entre os vértices origem e destino
+	 */
+	public abstract Set<Aresta> encontrarArestas(Vertice origem, Vertice destino);
+
+	public abstract void addVertice(Vertice vertice);
+
+	public final void addVertices(Vertice... vertices) {
 		for (Vertice vertice : vertices) {
 			addVertice(vertice);
 		}
 	}
 
-	public List<Vertice> addVertices(int quantidade) {
-		Assert.positive(quantidade, "Quantidade de vértices deve ser maior que zero");
-
-		List<Vertice> vertices = new ArrayList<>(quantidade);
-		for (int i = 0; i < quantidade; i++) {
-			vertices.add(addVertice());
-		}
-		return vertices;
-
-	}
-
 	public abstract void removeVertice(Vertice vertice);
 
-	public void removeVertices(Vertice... vertices) {
+	public final void removeVertices(Vertice... vertices) {
 		for (Vertice vertice : vertices) {
 			removeVertice(vertice);
 		}
 	}
 
-	public abstract boolean existeAresta(Aresta aresta);
-
-	public abstract int getQuantidadeDeArestas(Aresta aresta);
-
-	public abstract boolean existeVertice(Vertice vertice);
-
-	public abstract List<Aresta> getArestas();
-
-	public abstract List<Aresta> getArestas(Vertice vertice);
-
-	public abstract Set<Vertice> getVertices();
-
-	public abstract Set<Vertice> getVizinhos(Vertice vertice);
-
-	public abstract int getGrauDeEntrada(Vertice vertice);
-
-	public abstract int getGrauDeSaida(Vertice vertice);
-
-	public void resetar() {
-		for (Vertice vertice : Set.copyOf(getVertices())) {
-			removeVertice(vertice);
-		}
+	/**
+	 * Verifica se uma aresta com o label (rótulo) existe no grafo.
+	 * <br>
+	 * Obs.: O label é o identificador único da aresta.
+	 * 
+	 * @param label o rótulo da aresta
+	 * @return se a aresta existe no grafo
+	 */
+	public final boolean existeAresta(String label) {
+		checkNotNull(label, MSG_ARESTA_NULA);
+		return encontrarAresta(label) != null;
 	}
 
-	public abstract Grafo clone();
+	/**
+	 * Verifica se existe alguma aresta entre os vértices origem e destino.
+	 * <br>
+	 * No caso de um grafo não orientado, a são consideradas as arestas (origem ->
+	 * destino) e também (destino -> origem).
+	 * <br>
+	 * No caso de um grafo orientado, são consideradas apenas as arestas (origem ->
+	 * destino).
+	 * 
+	 * @param origem
+	 * @param destino
+	 * @return se existe uma aresta entre os vértices origem e destino
+	 */
+	public final boolean existeAresta(Vertice origem, Vertice destino) {
+		checkNotNull(origem, MSG_VERTICE_NULO);
+		checkNotNull(destino, MSG_VERTICE_NULO);
+
+		return encontrarAresta(origem, destino) != null;
+	}
+
+	/**
+	 * Verifica se existe um vértice no grafo.
+	 * 
+	 * @param vertice
+	 * @return se o vértice existe no grafo
+	 */
+	public final boolean existeVertice(Vertice vertice) {
+		checkNotNull(vertice, MSG_VERTICE_NULO);
+		return getVertices().contains(vertice);
+	}
+
+	public abstract Set<Aresta> getArestas();
+
+	// public final abstract Set<Aresta> getArestas(Vertice vertice);
+
+	/**
+	 * Retorna um conjunto de arestas do grafo.
+	 * 
+	 * @return conjunto de arestas do grafo
+	 */
+	public abstract Set<Vertice> getVertices();
+
+	/**
+	 * Retorna uma lista de vértices que podem ser alcançados a partir do vértice
+	 * informado.
+	 * <br>
+	 * No caso de um vértice não orientado, serão consideradas as arestas (vertice
+	 * -> vizinho) e também (vizinho -> vertice).
+	 * <br>
+	 * No caso de um vértice orientado, serão consideradas apenas as arestas
+	 * (vertice -> vizinho).
+	 * 
+	 * @param vertice
+	 * @return lista de vértices vizinhos do vértice informado
+	 */
+	public final Set<Vertice> getVizinhos(Vertice vertice) {
+		checkNotNull(vertice, MSG_VERTICE_NULO);
+		checkArgument(existeVertice(vertice), MSG_VERTICE_NAO_EXISTE);
+
+		return getVertices()
+				.stream()
+				.filter(v -> existeAresta(vertice, v))
+				.collect(Collectors.toSet());
+	}
+
+	public abstract long getGrauDeEntrada(Vertice vertice);
+
+	public abstract long getGrauDeSaida(Vertice vertice);
+
+	/**
+	 * Remove todos os vértices e arestas do grafo, deixando-o vazio.
+	 */
+	public final void resetar() {
+		removeVertices(getVertices().toArray(Vertice[]::new));
+	}
+
+	/**
+	 * Cria uma cópia do grafo atual. Instancia um novo grafo e adiciona os mesmos
+	 * vértices e arestas.
+	 * 
+	 * @return uma nova instância do grafo com os mesmos vértices e arestas
+	 */
+	public final Grafo clone() {
+		Grafo grafo = novaInstancia();
+		for (Vertice vertice : getVertices()) {
+			grafo.addVertice(vertice);
+		}
+		for (Aresta aresta : getArestas()) {
+			grafo.addAresta(aresta);
+		}
+		return grafo;
+	}
+
+	protected abstract Grafo novaInstancia();
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -102,32 +232,35 @@ public abstract class Grafo {
 			return false;
 		}
 		Grafo grafo = (Grafo) obj;
+		boolean saoDigrafos = this instanceof Digrafo && grafo instanceof Digrafo;
+		boolean saoNaoOrientados = this instanceof GrafoNaoDirecionado && grafo instanceof GrafoNaoDirecionado;
+		boolean mesmoTipo = saoDigrafos ^ saoNaoOrientados;
+		if (!mesmoTipo) {
+			return false;
+		}
 		return getVertices().equals(grafo.getVertices()) && getArestas().equals(grafo.getArestas());
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		String str = """
-		%s {
-			Vértices = { %s }
-			Arestas = { %s }
-		}""";
+				%s {
+					Vértices = { %s }
+					Arestas = { %s }
+				}""";
 		return String.format(
 				str,
 				getClass().getSimpleName(),
 				String.join(
 						", ",
 						getVertices().stream()
-									 .map(Vertice::id)
-									 .map(String::valueOf)
-									 .toList()
-				),
+								.map(Vertice::label)
+								.map(String::valueOf)
+								.toList()),
 				String.join(
 						", ",
 						getArestas().stream()
-									.map(aresta -> "(%s, %s)".formatted(aresta.origem().id(), aresta.destino().id()))
-									.toList()
-				)
-		);
+								.map(aresta -> "(%s, %s)".formatted(aresta.origem().label(), aresta.destino().label()))
+								.toList()));
 	}
 }

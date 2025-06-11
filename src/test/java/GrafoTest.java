@@ -200,7 +200,7 @@ public class GrafoTest {
 		assertTrue(clone.existeVertice(verticeD), "O clone deve conter o vértice D");
 
 		assertIterableEquals(List.of(arestaAB, arestaAB.inversa(), arestaBC, arestaDD), clone.getArestas());
-		assertIterableEquals(Set.of(verticeA, verticeB, verticeC, verticeD), clone.getVertices(),
+		assertEquals(Set.of(verticeA, verticeB, verticeC, verticeD), clone.getVertices(),
 				"O clone deve conter os mesmos vértices");
 	}
 }

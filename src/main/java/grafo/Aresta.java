@@ -1,18 +1,19 @@
 package grafo;
 
-import grafo.util.Assert;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-public record Aresta(Vertice origem, Vertice destino, double peso) {
-	public Aresta(Vertice origem, Vertice destino) {
-		this(origem, destino, 0);
+public record Aresta(String label, Vertice origem, Vertice destino, double peso) {
+	public Aresta(String label, Vertice origem, Vertice destino) {
+		this(label, origem, destino, 0);
 	}
 
 	public Aresta {
-		Assert.notNull(origem, "Aresta não pode ter origem nula");
-		Assert.notNull(destino, "Aresta não pode ter destino nulo");
+		checkNotNull(label, "Rótulo da aresta não pode ser nulo");
+		checkNotNull(origem, "Vértice de origem não pode ser nulo");
+		checkNotNull(destino, "Vértice de destino não pode ser nulo");
 	}
 
 	public Aresta inversa() {
-		return new Aresta(destino, origem, peso);
+		return new Aresta(label + "- inversa", destino, origem, peso);
 	}
 }

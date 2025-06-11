@@ -1,48 +1,30 @@
 package grafo.nao_orientado;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.List;
 
-import grafo.Aresta;
 import grafo.Grafo;
 import grafo.Vertice;
-import grafo.util.Assert;
 
 public abstract class GrafoNaoDirecionado extends Grafo {
-	public int getGrau(Vertice vertice) {
-		Assert.notNull(vertice, "O vértice não pode ser nulo.");
-		List<Aresta> arestas = getArestas(vertice);
-		int qtdArestas = arestas.size();
-		int qtdLoops = (int) arestas
-				.stream()
-				.filter(a -> a.origem().equals(a.destino()))
+	public final long getGrau(Vertice vertice) {
+		checkNotNull(vertice, MSG_VERTICE_NULO);
+		return getArestas().stream()
+				.flatMap(aresta -> List.of(aresta.destino(), aresta.origem()).stream())
+				.filter(vertice::equals)
 				.count();
-		return qtdArestas + qtdLoops;
 	}
 
 	@Override
-	public final int getGrauDeEntrada(Vertice vertice) {
+	public final long getGrauDeEntrada(Vertice vertice) {
+		checkNotNull(vertice, MSG_VERTICE_NULO);
 		return getGrau(vertice);
 	}
 
 	@Override
-	public final int getGrauDeSaida(Vertice vertice) {
+	public final long getGrauDeSaida(Vertice vertice) {
+		checkNotNull(vertice, MSG_VERTICE_NULO);
 		return getGrau(vertice);
-	}
-
-	@Override
-	public int getQuantidadeDeArestas(Aresta aresta) {
-		Assert.notNull(aresta, MSG_ARESTA_NULA);
-		return (int) getArestas().stream()
-				.filter(a -> a.equals(aresta) || a.inversa().equals(aresta))
-				.count();
-	}
-
-	public GrafoNaoDirecionado unir(GrafoNaoDirecionado outroGrafo) {
-		Assert.notNull(outroGrafo, "O grafo a ser unido não pode ser nulo.");
-
-		GrafoNaoDirecionado grafoUnido = (GrafoNaoDirecionado) this.clone();
-		grafoUnido.addVertices(outroGrafo.getVertices().toArray(Vertice[]::new));
-		grafoUnido.addArestas(outroGrafo.getArestas().toArray(Aresta[]::new));
-		return (GrafoNaoDirecionado) grafoUnido;
 	}
 }

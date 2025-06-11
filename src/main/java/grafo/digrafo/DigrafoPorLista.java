@@ -1,18 +1,21 @@
 package grafo.digrafo;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 import grafo.Aresta;
 import grafo.Grafo;
 import grafo.Vertice;
-import grafo.util.Assert;
 
 public class DigrafoPorLista extends Digrafo {
-	private int verticeCounter = 1;
-	private final Map<Vertice, List<Vertice>> verticesAdjacencias = new HashMap<>();
+	private final Map<Vertice, List<Aresta>> verticesAdjacencias = new HashMap<>();
 
 	@Override
 	public void addAresta(Aresta aresta) {
-		Assert.notNull(aresta, MSG_ARESTA_NULA);
+		checkNotNull(aresta, MSG_ARESTA_NULA);
 
 		Vertice origem = aresta.origem();
 		Vertice destino = aresta.destino();
@@ -20,68 +23,32 @@ public class DigrafoPorLista extends Digrafo {
 		addVertice(origem);
 		addVertice(destino);
 
-		verticesAdjacencias.get(origem).add(destino);
+		verticesAdjacencias.get(origem).add(aresta);
 	}
 
-	@Override
-	public void removeAresta(Aresta aresta) {
-		Assert.notNull(aresta, MSG_ARESTA_NULA);
-
-		Vertice origem = aresta.origem();
-		Vertice destino = aresta.destino();
-		if (verticesAdjacencias.containsKey(origem)) {
-			List<Vertice> vizinhos = verticesAdjacencias.get(origem);
-			vizinhos.remove(destino);
-		}
-	}
 
 	@Override
-	public Vertice addVertice() {
-		Vertice novoVertice = new Vertice(verticeCounter++);
-		verticesAdjacencias.putIfAbsent(novoVertice, new ArrayList<>());
-		return novoVertice;
-	}
-
-	@Override
-	protected void addVertice(Vertice vertice) {
-		Assert.notNull(vertice, MSG_ARESTA_NULA);
-		if (existeVertice(vertice))
-			return;
-		verticesAdjacencias.put(vertice, new ArrayList<>());
-		verticeCounter++;
+	public void addVertice(Vertice vertice) {
+		checkNotNull(vertice, MSG_VERTICE_NULO);
+		verticesAdjacencias.putIfAbsent(vertice, new ArrayList<>());
 	}
 
 	@Override
 	public void removeVertice(Vertice vertice) {
-		Assert.notNull(vertice, MSG_VERTICE_NULO);
+		checkNotNull(vertice, MSG_VERTICE_NULO);
 
 		verticesAdjacencias.remove(vertice);
 
-		for (List<Vertice> vizinhos : verticesAdjacencias.values()) {
-			vizinhos.remove(vertice);
+		for (List<Aresta> adjacencias : verticesAdjacencias.values()) {
+			adjacencias.removeIf(aresta -> aresta.origem().equals(vertice) || aresta.destino().equals(vertice));
 		}
 	}
 
 	@Override
-	public boolean existeAresta(Aresta aresta) {
-		return getVizinhos(aresta.origem()).contains(aresta.destino());
-	}
-
-	@Override
-	public boolean existeVertice(Vertice vertice) {
-		return verticesAdjacencias.containsKey(vertice);
-	}
-
-	@Override
-	public List<Aresta> getArestas() {
-		return verticesAdjacencias.keySet().stream().map(this::getArestas).flatMap(List::stream).toList();
-	}
-
-	@Override
-	public List<Aresta> getArestas(Vertice vertice) {
-		Assert.notNull(vertice, MSG_VERTICE_NULO);
-
-		return verticesAdjacencias.get(vertice).stream().map(vizinho -> new Aresta(vertice, vizinho)).toList();
+	public Set<Aresta> getArestas() {
+		return verticesAdjacencias.values().stream()
+				.flatMap(List::stream)
+				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -89,39 +56,27 @@ public class DigrafoPorLista extends Digrafo {
 		return verticesAdjacencias.keySet();
 	}
 
-	@Override
-	public Set<Vertice> getVizinhos(Vertice vertice) {
-		Assert.notNull(vertice, MSG_VERTICE_NULO);
-
-		return new HashSet<>(verticesAdjacencias.get(vertice));
-	}
 
 	@Override
-	public int getGrauDeEntrada(Vertice vertice) {
-		Assert.notNull(vertice, MSG_VERTICE_NULO);
+	public void removeAresta(String label) {
+		checkNotNull(label, MSG_ARESTA_NULA);
 
-		return (int) verticesAdjacencias.values().stream()
-				.flatMap(Collection::stream)
-				.filter(vertice::equals)
-				.count();
-	}
-
-	@Override
-	public int getGrauDeSaida(Vertice vertice) {
-		Assert.notNull(vertice, MSG_VERTICE_NULO);
-
-		return getVizinhos(vertice).size();
-	}
-
-	@Override
-	public Grafo clone() {
-		DigrafoPorLista clone = new DigrafoPorLista();
-		for (Vertice vertice : verticesAdjacencias.keySet()) {
-			clone.addVertice(vertice);
+		for (List<Aresta> adjacencias : verticesAdjacencias.values()) {
+			adjacencias.removeIf(aresta -> aresta.label().equals(label));
 		}
-		for (Aresta aresta : getArestas()) {
-			clone.addAresta(aresta);
-		}
-		return clone;
+	}
+
+
+	@Override
+	public Set<Aresta> encontrarArestas(Vertice origem, Vertice destino) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'encontrarArestas'");
+	}
+
+
+	@Override
+	protected Grafo novaInstancia() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'novaInstancia'");
 	}
 }

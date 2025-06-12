@@ -22,10 +22,6 @@ public record Aresta(String label, Vertice origem, Vertice destino, double peso)
 		return new Aresta(label + "- inversa", destino, origem, peso);
 	}
 
-	public boolean ehLoop() {
-		return origem.equals(destino);
-	}
-
 	public boolean mesmoLabel(Aresta outra) {
 		return this.label.equals(outra.label);
 	}
@@ -88,5 +84,9 @@ public record Aresta(String label, Vertice origem, Vertice destino, double peso)
 	public Aresta comLabel(UnaryOperator<String> funcaoLabel) {
 		checkNotNull(funcaoLabel, "Função de rótulo não pode ser nula");
 		return comLabel(funcaoLabel.apply(label));
+	}
+
+	public boolean ehLaco() {
+		return origem.equals(destino);
 	}
 }

@@ -264,6 +264,10 @@ public abstract class Grafo {
 		return getVertices().equals(grafo.getVertices()) && getArestas().equals(grafo.getArestas());
 	}
 
+	public final boolean temLaco() {
+		return getArestas().stream().anyMatch(Aresta::ehLaco);
+	}
+
 	@Override
 	public final String toString() {
 		String str = """

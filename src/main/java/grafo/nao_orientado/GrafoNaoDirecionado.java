@@ -44,20 +44,11 @@ public abstract class GrafoNaoDirecionado extends Grafo {
 
 	public final GrafoNaoDirecionado uniao(GrafoNaoDirecionado outroGrafo) {
 		checkNotNull(outroGrafo, "Outro grafo não pode ser nulo");
+		// TODO checar se são disjuntos
 
-		GrafoNaoDirecionado grafoUnido = (GrafoNaoDirecionado) novaInstancia();
-		for (Vertice vertice : getVertices()) {
-			grafoUnido.addVertice(vertice.comLabel(label -> "G1-" + label));
-		}
-		for (Vertice vertice : outroGrafo.getVertices()) {
-			grafoUnido.addVertice(vertice.comLabel(label -> "G2-" + label));
-		}
-		for (Aresta aresta : getArestas()) {
-			grafoUnido.addAresta(aresta.comLabel(label -> "G1-" + label));
-		}
-		for (Aresta aresta : outroGrafo.getArestas()) {
-			grafoUnido.addAresta(aresta.comLabel(label -> "G2-" + label));
-		}
+		GrafoNaoDirecionado grafoUnido = (GrafoNaoDirecionado) clonar();
+		grafoUnido.addVertices(outroGrafo.getVertices().toArray(Vertice[]::new));
+		grafoUnido.addArestas(outroGrafo.getArestas().toArray(Aresta[]::new));
 		return grafoUnido;
 	}
 }

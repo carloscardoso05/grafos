@@ -179,6 +179,7 @@ public class GrafoNaoDirecionadoTest {
 
 	@Test
 	void unirTest() {
+
 		GrafoNaoDirecionado grafo1 = (GrafoNaoDirecionado) grafo.clonar();
 
 		Vertice verticeA = grafo.addVertice(new Vertice("A"));
@@ -188,6 +189,7 @@ public class GrafoNaoDirecionadoTest {
 		grafo.addArestas(arestaAB, arestaBA);
 
 		Vertice verticeC = grafo1.addVertice(new Vertice("C"));
+		Vertice verticeD = grafo1.addVertice(new Vertice("D"));
 		Aresta arestaCC = new Aresta("CC", verticeC, verticeC);
 		grafo1.addArestas(arestaCC);
 

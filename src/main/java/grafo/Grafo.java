@@ -25,13 +25,6 @@ public abstract class Grafo {
 		}
 	}
 
-//	public final void removeAresta(Aresta aresta) {
-//		checkNotNull(aresta, MSG_ARESTA_NULA);
-//		checkArgument(existeAresta(aresta), MSG_ARESTA_EXISTE);
-//
-//		removeAresta(aresta.label());
-//	}
-
 	public abstract void removeAresta(String label);
 
 	public final void removeArestas(String... labels) {
@@ -121,19 +114,6 @@ public abstract class Grafo {
 		}
 	}
 
-	/**
-	 * Verifica se uma aresta existe no grafo.
-	 * <br>
-	 * A aresta é considerada existente se estiver no conjunto de arestas do grafo.
-	 * Isso leva em conta o label (rótulo) da aresta, a origem, o destino e o peso.
-	 *
-	 * @param aresta
-	 * @return se a aresta existe no grafo
-	 */
-//	public final boolean existeAresta(Aresta aresta) {
-//		checkNotNull(aresta, MSG_ARESTA_NULA);
-//		return getArestas().contains(aresta);
-//	}
 
 	/**
 	 * Verifica se uma aresta com o label (rótulo) existe no grafo.

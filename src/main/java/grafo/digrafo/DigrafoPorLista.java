@@ -16,6 +16,7 @@ public class DigrafoPorLista extends Digrafo {
 	@Override
 	public void addAresta(Aresta aresta) {
 		checkNotNull(aresta, MSG_ARESTA_NULA);
+		checkArgument(!existeAresta(aresta.label()), MSG_ARESTA_EXISTE);
 
 		Vertice origem = aresta.origem();
 		Vertice destino = aresta.destino();
@@ -26,11 +27,11 @@ public class DigrafoPorLista extends Digrafo {
 		verticesAdjacencias.get(origem).add(aresta);
 	}
 
-
 	@Override
-	public void addVertice(Vertice vertice) {
+	public Vertice addVertice(Vertice vertice) {
 		checkNotNull(vertice, MSG_VERTICE_NULO);
 		verticesAdjacencias.putIfAbsent(vertice, new ArrayList<>());
+		return vertice;
 	}
 
 	@Override
@@ -56,7 +57,6 @@ public class DigrafoPorLista extends Digrafo {
 		return verticesAdjacencias.keySet();
 	}
 
-
 	@Override
 	public void removeAresta(String label) {
 		checkNotNull(label, MSG_ARESTA_NULA);
@@ -66,17 +66,16 @@ public class DigrafoPorLista extends Digrafo {
 		}
 	}
 
-
 	@Override
 	public Set<Aresta> encontrarArestas(Vertice origem, Vertice destino) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'encontrarArestas'");
+		return getArestas()
+				.stream()
+				.filter(aresta -> aresta.origem().equals(origem) && aresta.destino().equals(destino))
+				.collect(Collectors.toSet());
 	}
-
 
 	@Override
 	protected Grafo novaInstancia() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'novaInstancia'");
+		return new DigrafoPorLista();
 	}
 }

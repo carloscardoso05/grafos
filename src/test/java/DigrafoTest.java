@@ -1,3 +1,8 @@
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Set;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.Parameter;
@@ -8,11 +13,6 @@ import grafo.Aresta;
 import grafo.Vertice;
 import grafo.digrafo.Digrafo;
 import grafo.digrafo.DigrafoPorLista;
-
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParameterizedClass
 @MethodSource("grafoProvider")
@@ -31,13 +31,14 @@ public class DigrafoTest {
 
 	@Test
 	void getGrauDeEntradaESaidaTest() {
-		Vertice verticeA = grafo.addVertice();
-		Vertice verticeB = grafo.addVertice();
-		Vertice verticeC = grafo.addVertice();
-		Vertice verticeD = grafo.addVertice();
 
-		Aresta arestaAB = new Aresta(verticeA, verticeB);
-		Aresta arestaBC = new Aresta(verticeB, verticeC);
+		Vertice verticeA = grafo.addVertice(new Vertice("A"));
+		Vertice verticeB = grafo.addVertice(new Vertice("B"));
+		Vertice verticeC = grafo.addVertice(new Vertice("C"));
+		Vertice verticeD = grafo.addVertice(new Vertice("D"));
+
+		Aresta arestaAB = new Aresta("AB", verticeA, verticeB);
+		Aresta arestaBC = new Aresta("BC", verticeB, verticeC);
 
 		grafo.addArestas(arestaAB, arestaBC);
 
@@ -56,20 +57,24 @@ public class DigrafoTest {
 
 	@Test
 	void getArestasTest() {
-		Vertice verticeA = grafo.addVertice();
-		Vertice verticeB = grafo.addVertice();
-		Vertice verticeC = grafo.addVertice();
+		Vertice verticeA = grafo.addVertice(new Vertice("A"));
+		Vertice verticeB = grafo.addVertice(new Vertice("B"));
+		Vertice verticeC = grafo.addVertice(new Vertice("C"));
 
-		Aresta arestaAB = new Aresta(verticeA, verticeB);
-		Aresta arestaBC = new Aresta(verticeB, verticeC);
+		Aresta arestaAB1 = new Aresta("AB", verticeA, verticeB);
+		Aresta arestaAB2 = arestaAB1.comLabel("AB2");
+		Aresta arestaBA = arestaAB1.inversa().comLabel("BA");
+		Aresta arestaBC = new Aresta("BC", verticeB, verticeC);
 
-		grafo.addArestas(arestaAB, arestaAB, arestaAB.inversa(), arestaBC);
+		grafo.addArestas(arestaAB1, arestaAB2, arestaBA, arestaBC);
 
-		List<Aresta> arestas = grafo.getArestas();
+		Set<Aresta> arestas = grafo.getArestas();
 		assertEquals(4, arestas.size(), "O grafo deve ter 4 arestas.");
-		assertEquals(2, grafo.getQuantidadeDeArestas(arestaAB), "O grafo deve ter 2 arestas AB.");
-		assertEquals(1, grafo.getQuantidadeDeArestas(arestaAB.inversa()), "O grafo deve ter 1 aresta BA.");
-		assertEquals(1, grafo.getQuantidadeDeArestas(arestaBC), "O grafo deve ter 1 aresta BC.");
+		assertEquals(2, grafo.encontrarArestas(verticeA, verticeB).size(),
+				"O grafo deve ter 2 arestas AB.");
+		assertEquals(1, grafo.encontrarArestas(verticeB, verticeA).size(),
+				"O grafo deve ter 1 aresta BA.");
+		assertEquals(1, grafo.encontrarArestas(verticeB, verticeC).size(), "O grafo deve ter 1 aresta BC.");
 	}
 
 }

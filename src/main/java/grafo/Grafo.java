@@ -6,6 +6,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import grafo.digrafo.Digrafo;
 import grafo.nao_orientado.GrafoNaoDirecionado;
 
@@ -13,6 +15,7 @@ public abstract class Grafo {
 	protected static final String MSG_VERTICE_NULO = "Vértice não pode ser nulo";
 	protected static final String MSG_VERTICE_NAO_EXISTE = "Vértice não existe no grafo";
 	protected static final String MSG_ARESTA_NULA = "Aresta não pode ser nula";
+	protected static final String MSG_ARESTA_EXISTE = "Aresta já existe no grafo com o label informado";
 
 	public abstract void addAresta(Aresta aresta);
 
@@ -21,6 +24,13 @@ public abstract class Grafo {
 			addAresta(aresta);
 		}
 	}
+
+//	public final void removeAresta(Aresta aresta) {
+//		checkNotNull(aresta, MSG_ARESTA_NULA);
+//		checkArgument(existeAresta(aresta), MSG_ARESTA_EXISTE);
+//
+//		removeAresta(aresta.label());
+//	}
 
 	public abstract void removeAresta(String label);
 
@@ -40,13 +50,13 @@ public abstract class Grafo {
 		}
 	}
 
-	public final void removeTodasArestas(Vertice origem, Vertice destino) {
+	public final void removeArestas(Vertice origem, Vertice destino) {
 		checkNotNull(origem, MSG_VERTICE_NULO);
 		checkNotNull(destino, MSG_VERTICE_NULO);
 
 		String[] labels = encontrarArestas(origem, destino).stream()
-				.map(Aresta::label)
-				.toArray(String[]::new);
+														   .map(Aresta::label)
+														   .toArray(String[]::new);
 		removeArestas(labels);
 	}
 
@@ -54,7 +64,7 @@ public abstract class Grafo {
 	 * Tenta encontrar uma aresta pelo seu label (rótulo).
 	 * <br>
 	 * Obs.: O label é o identificador único da aresta.
-	 * 
+	 *
 	 * @param label o rótulo da aresta
 	 * @return a aresta com o label informado ou null se não existir
 	 */
@@ -70,38 +80,37 @@ public abstract class Grafo {
 
 	/**
 	 * Tenta encontrar uma aresta entre dois vértices.
-	 * 
+	 *
 	 * @param origem
 	 * @param destino
 	 * @return a aresta entre os vértices origem e destino ou null se não existir
 	 */
-	public final Aresta encontrarAresta(Vertice origem, Vertice destino) {
-		checkNotNull(origem, MSG_VERTICE_NULO);
-		checkNotNull(destino, MSG_VERTICE_NULO);
-
-		return getArestas()
-				.stream()
-				.filter(aresta -> aresta.origem().equals(origem) && aresta.destino().equals(destino))
-				.findFirst()
-				.orElse(null);
-	}
+	public abstract Aresta encontrarAresta(Vertice origem, Vertice destino);
 
 	/**
 	 * Encontra todas as arestas entre o vértice origem e o vértice destino.
-	 * <br> No caso de um grafo não orientado, são consideradas as arestas (origem -> destino) e também (destino -> origem).
-	 * <br> No caso de um grafo orientado, são consideradas apenas as arestas (origem -> destino).
+	 * <br>
+	 * No caso de um grafo não orientado, são consideradas as arestas (origem ->
+	 * destino) e também (destino -> origem).
+	 * <br>
+	 * No caso de um grafo orientado, são consideradas apenas as arestas (origem ->
+	 * destino).
+	 *
 	 * @param origem
 	 * @param destino
 	 * @return um conjunto de arestas entre os vértices origem e destino
 	 */
 	public abstract Set<Aresta> encontrarArestas(Vertice origem, Vertice destino);
 
-	public abstract void addVertice(Vertice vertice);
+	@CanIgnoreReturnValue
+	public abstract Vertice addVertice(Vertice vertice);
 
-	public final void addVertices(Vertice... vertices) {
+	@CanIgnoreReturnValue
+	public final Vertice[] addVertices(Vertice... vertices) {
 		for (Vertice vertice : vertices) {
 			addVertice(vertice);
 		}
+		return vertices;
 	}
 
 	public abstract void removeVertice(Vertice vertice);
@@ -113,10 +122,24 @@ public abstract class Grafo {
 	}
 
 	/**
+	 * Verifica se uma aresta existe no grafo.
+	 * <br>
+	 * A aresta é considerada existente se estiver no conjunto de arestas do grafo.
+	 * Isso leva em conta o label (rótulo) da aresta, a origem, o destino e o peso.
+	 *
+	 * @param aresta
+	 * @return se a aresta existe no grafo
+	 */
+//	public final boolean existeAresta(Aresta aresta) {
+//		checkNotNull(aresta, MSG_ARESTA_NULA);
+//		return getArestas().contains(aresta);
+//	}
+
+	/**
 	 * Verifica se uma aresta com o label (rótulo) existe no grafo.
 	 * <br>
 	 * Obs.: O label é o identificador único da aresta.
-	 * 
+	 *
 	 * @param label o rótulo da aresta
 	 * @return se a aresta existe no grafo
 	 */
@@ -133,7 +156,7 @@ public abstract class Grafo {
 	 * <br>
 	 * No caso de um grafo orientado, são consideradas apenas as arestas (origem ->
 	 * destino).
-	 * 
+	 *
 	 * @param origem
 	 * @param destino
 	 * @return se existe uma aresta entre os vértices origem e destino
@@ -147,7 +170,7 @@ public abstract class Grafo {
 
 	/**
 	 * Verifica se existe um vértice no grafo.
-	 * 
+	 *
 	 * @param vertice
 	 * @return se o vértice existe no grafo
 	 */
@@ -162,7 +185,7 @@ public abstract class Grafo {
 
 	/**
 	 * Retorna um conjunto de arestas do grafo.
-	 * 
+	 *
 	 * @return conjunto de arestas do grafo
 	 */
 	public abstract Set<Vertice> getVertices();
@@ -176,7 +199,7 @@ public abstract class Grafo {
 	 * <br>
 	 * No caso de um vértice orientado, serão consideradas apenas as arestas
 	 * (vertice -> vizinho).
-	 * 
+	 *
 	 * @param vertice
 	 * @return lista de vértices vizinhos do vértice informado
 	 */
@@ -204,10 +227,10 @@ public abstract class Grafo {
 	/**
 	 * Cria uma cópia do grafo atual. Instancia um novo grafo e adiciona os mesmos
 	 * vértices e arestas.
-	 * 
+	 *
 	 * @return uma nova instância do grafo com os mesmos vértices e arestas
 	 */
-	public final Grafo clone() {
+	public final Grafo clonar() {
 		Grafo grafo = novaInstancia();
 		for (Vertice vertice : getVertices()) {
 			grafo.addVertice(vertice);
@@ -254,13 +277,14 @@ public abstract class Grafo {
 				String.join(
 						", ",
 						getVertices().stream()
-								.map(Vertice::label)
-								.map(String::valueOf)
-								.toList()),
+									 .map(Vertice::label)
+									 .map(String::valueOf)
+									 .toList()),
 				String.join(
 						", ",
 						getArestas().stream()
-								.map(aresta -> "(%s, %s)".formatted(aresta.origem().label(), aresta.destino().label()))
-								.toList()));
+									.map(aresta -> "(%s, %s)".formatted(aresta.origem().label(), aresta.destino()
+																									   .label()))
+									.toList()));
 	}
 }

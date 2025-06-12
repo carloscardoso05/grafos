@@ -6,16 +6,21 @@ public class Main {
 	public static void main(String[] args) {
 		Grafo grafo = new GrafoNaoDirecionadoPorLista();
 
-		Vertice v1 = grafo.addVertice();
-		Vertice v2 = grafo.addVertice();
-		Vertice v3 = grafo.addVertice();
-		Vertice v4 = grafo.addVertice();
+		Vertice verticeA = new Vertice("A");
+		Vertice verticeB = new Vertice("B");
+		Vertice verticeC = new Vertice("C");
+		Vertice verticeD = new Vertice("D");
 
-		grafo.addAresta(new Aresta(v1, v2));
-		grafo.addAresta(new Aresta(v2, v3));
-		grafo.addAresta(new Aresta(v3, v4));
-		grafo.addAresta(new Aresta(v4, v1));
-		grafo.addAresta(new Aresta(v1, v3));
+		grafo.addVertice(verticeA);
+		grafo.addVertice(verticeB);
+		grafo.addVertice(verticeC);
+		grafo.addVertice(verticeD);
+
+		grafo.addAresta(new Aresta("AB", verticeA, verticeB));
+		grafo.addAresta(new Aresta("BC", verticeB, verticeC));
+		grafo.addAresta(new Aresta("CD", verticeC, verticeD));
+		grafo.addAresta(new Aresta("DA", verticeD, verticeA));
+		grafo.addAresta(new Aresta("AC", verticeA, verticeC));
 
 		System.out.println(grafo);
 	}

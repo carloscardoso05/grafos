@@ -1,5 +1,5 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,25 +9,25 @@ import grafo.Vertice;
 public class ArestaTest {
     @Test
     void criarArestaTest() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            Vertice origem = new Vertice(1);
-            new Aresta(origem, null);
-        }, "Aresta com destino nulo deve lançar IllegalArgumentException");
+        assertThrows(NullPointerException.class, () -> {
+            Vertice origem = new Vertice("A");
+            new Aresta("A - null", origem, null);
+        }, "Aresta com destino nulo deve lançar NullPointerException");
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            Vertice destino = new Vertice(1);
-            new Aresta(null, destino);
-        }, "Aresta com origem nula deve lançar IllegalArgumentException");
+        assertThrows(NullPointerException.class, () -> {
+            Vertice destino = new Vertice("B");
+            new Aresta("null - B", null, destino);
+        }, "Aresta com origem nula deve lançar NullPointerException");
     }
 
     @Test
     void arestaInversaTest() {
-        Vertice origem = new Vertice(1);
-        Vertice destino = new Vertice(2);
-        Aresta aresta = new Aresta(origem, destino);
-        Aresta inversa = new Aresta(destino, origem);
+        Vertice origem = new Vertice("A");
+        Vertice destino = new Vertice("B");
+        Aresta aresta = new Aresta("AB", origem, destino);
+        Aresta inversa = new Aresta("BA", destino, origem);
 
-        assertEquals(inversa, aresta.inversa(),
-                "Aresta inversa deve ser igual à aresta original invertida");
+        assertTrue(aresta.sentidoInverso(inversa), "Aresta inversa deve ser igual à aresta original invertida");
+        assertTrue(aresta.sentidoInverso(aresta.inversa()), "Aresta inversa deve ser igual à aresta original invertida");
     }
 }

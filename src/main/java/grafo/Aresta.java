@@ -89,4 +89,23 @@ public record Aresta(String label, Vertice origem, Vertice destino, double peso)
 	public boolean ehLaco() {
 		return origem.equals(destino);
 	}
+
+	@Override
+	public final boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof Aresta outra)) {
+			return false;
+		}
+		return mesmoLabel(outra);
+	}
+
+	@Override
+	public final int hashCode() {
+		return label.hashCode();
+	}
 }

@@ -1,7 +1,6 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,17 +11,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import grafo.Aresta;
 import grafo.Vertice;
 import grafo.digrafo.Digrafo;
-import grafo.digrafo.DigrafoPorLista;
 
 @ParameterizedClass
-@MethodSource("grafoProvider")
+@MethodSource("Provider#digrafos")
 public class DigrafoTest {
 	@Parameter
 	Digrafo grafo;
-
-	static Stream<Digrafo> grafoProvider() {
-		return Stream.of(new DigrafoPorLista());
-	}
 
 	@BeforeEach
 	void beforeEach() {

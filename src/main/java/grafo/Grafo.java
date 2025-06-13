@@ -3,6 +3,8 @@ package grafo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,8 +50,8 @@ public abstract class Grafo {
 		checkNotNull(destino, MSG_VERTICE_NULO);
 
 		String[] labels = encontrarArestas(origem, destino).stream()
-														   .map(Aresta::label)
-														   .toArray(String[]::new);
+				.map(Aresta::label)
+				.toArray(String[]::new);
 		removeArestas(labels);
 	}
 
@@ -113,7 +115,6 @@ public abstract class Grafo {
 			removeVertice(vertice);
 		}
 	}
-
 
 	/**
 	 * Verifica se uma aresta com o label (rótulo) existe no grafo.
@@ -223,6 +224,13 @@ public abstract class Grafo {
 
 	protected abstract Grafo novaInstancia();
 
+	public final boolean mesmoTipo(Grafo outroGrafo) {
+		checkNotNull(outroGrafo, "Outro grafo não pode ser nulo");
+		boolean saoDigrafos = this instanceof Digrafo && outroGrafo instanceof Digrafo;
+		boolean saoNaoOrientados = this instanceof GrafoNaoDirecionado && outroGrafo instanceof GrafoNaoDirecionado;
+		return saoDigrafos ^ saoNaoOrientados;
+	}
+
 	@Override
 	public final boolean equals(Object obj) {
 		if (this == obj) {
@@ -231,14 +239,10 @@ public abstract class Grafo {
 		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if (!(obj instanceof Grafo grafo)) {
 			return false;
 		}
-		Grafo grafo = (Grafo) obj;
-		boolean saoDigrafos = this instanceof Digrafo && grafo instanceof Digrafo;
-		boolean saoNaoOrientados = this instanceof GrafoNaoDirecionado && grafo instanceof GrafoNaoDirecionado;
-		boolean mesmoTipo = saoDigrafos ^ saoNaoOrientados;
-		if (!mesmoTipo) {
+		if (!mesmoTipo(grafo)) {
 			return false;
 		}
 		return getVertices().equals(grafo.getVertices()) && getArestas().equals(grafo.getArestas());
@@ -246,6 +250,44 @@ public abstract class Grafo {
 
 	public final boolean temLaco() {
 		return getArestas().stream().anyMatch(Aresta::ehLaco);
+	}
+
+	public final int componentesConexas() {
+		Set<Vertice> visitados = new HashSet<>();
+		int componentes = 0;
+
+		for (Vertice vertice : getVertices()) {
+			if (!visitados.contains(vertice)) {
+				componentes++;
+				visitados.add(vertice);
+				visitados.addAll(getVizinhos(vertice));
+			}
+		}
+
+		return componentes;
+	}
+
+	public final boolean ehConexo() {
+		return componentesConexas() == 1;
+	}
+
+	public final boolean ehPonte(Aresta aresta) {
+		checkNotNull(aresta, MSG_ARESTA_NULA);
+		checkArgument(existeAresta(aresta.label()), "Aresta deve existir no grafo");
+
+		Grafo grafoSemAresta = clonar();
+		grafoSemAresta.removeAresta(aresta.label());
+
+		return grafoSemAresta.ehConexo();
+	}
+
+	public final boolean ehDisjunto(Grafo outroGrafo) {
+		checkNotNull(outroGrafo, "Outro grafo não pode ser nulo");
+		Set<Vertice> outrosVertices = outroGrafo.getVertices();
+		Set<Aresta> outrasArestas = outroGrafo.getArestas();
+		boolean verticesDisjuntos = getVertices().stream().noneMatch(outrosVertices::contains);
+		boolean arestasDisjuntas = getArestas().stream().noneMatch(outrasArestas::contains);
+		return verticesDisjuntos && arestasDisjuntas;
 	}
 
 	@Override
@@ -261,14 +303,14 @@ public abstract class Grafo {
 				String.join(
 						", ",
 						getVertices().stream()
-									 .map(Vertice::label)
-									 .map(String::valueOf)
-									 .toList()),
+								.map(Vertice::label)
+								.map(String::valueOf)
+								.toList()),
 				String.join(
 						", ",
 						getArestas().stream()
-									.map(aresta -> "(%s, %s)".formatted(aresta.origem().label(), aresta.destino()
-																									   .label()))
-									.toList()));
+								.map(aresta -> "(%s, %s)".formatted(aresta.origem().label(), aresta.destino()
+										.label()))
+								.toList()));
 	}
 }

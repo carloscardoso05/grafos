@@ -1,28 +1,25 @@
-import grafo.Aresta;
-import grafo.Vertice;
-import grafo.nao_orientado.GrafoNaoDirecionado;
-import grafo.nao_orientado.GrafoNaoDirecionadoPorLista;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.Parameter;
 import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Set;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import grafo.Aresta;
+import grafo.Vertice;
+import grafo.nao_orientado.GrafoNaoDirecionado;
 
 @ParameterizedClass
-@MethodSource("grafoProvider")
+@MethodSource("Provider#grafosNaoDirecionados")
 public class GrafoNaoDirecionadoTest {
 	@Parameter
 	GrafoNaoDirecionado grafo;
-
-	static Stream<GrafoNaoDirecionado> grafoProvider() {
-		return Stream.of(new GrafoNaoDirecionadoPorLista());
-	}
 
 	@BeforeEach
 	void beforeEach() {

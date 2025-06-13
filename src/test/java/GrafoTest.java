@@ -1,29 +1,26 @@
-import grafo.Aresta;
-import grafo.Grafo;
-import grafo.Vertice;
-import grafo.digrafo.DigrafoPorLista;
-import grafo.nao_orientado.GrafoNaoDirecionadoPorLista;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.Parameter;
 import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Set;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import grafo.Aresta;
+import grafo.Grafo;
+import grafo.Vertice;
 
 @ParameterizedClass
-@MethodSource("grafoProvider")
+@MethodSource("Provider#grafos")
 public class GrafoTest {
 	@Parameter
 	Grafo grafo;
-
-	static Stream<Grafo> grafoProvider() {
-		return Stream.of(new GrafoNaoDirecionadoPorLista(), new DigrafoPorLista());
-	}
 
 	@BeforeEach
 	void beforeEach() {
@@ -205,5 +202,31 @@ public class GrafoTest {
 		assertEquals(Set.of(arestaAB, arestaAB.inversa(), arestaBC, arestaDD), clone.getArestas());
 		assertEquals(Set.of(verticeA, verticeB, verticeC, verticeD), clone.getVertices(),
 				"O clone deve conter os mesmos vértices");
+	}
+
+	@Test
+	void ehDisjuntoTest() {
+		Grafo grafo1 = grafo.clonar();
+		Grafo grafo2 = grafo.clonar();
+		Grafo grafo3 = grafo.clonar();
+
+		grafo1.addArestas(
+				new Aresta("AB", new Vertice("A"), new Vertice("B")),
+				new Aresta("BC", new Vertice("B"), new Vertice("C"))	
+		);
+
+		grafo2.addArestas(
+				new Aresta("DE", new Vertice("D"), new Vertice("E")),
+				new Aresta("EF", new Vertice("E"), new Vertice("F"))
+		);
+
+		grafo3.addArestas(
+				new Aresta("AH", new Vertice("A"), new Vertice("H")),
+				new Aresta("HI", new Vertice("H"), new Vertice("I"))
+		);
+
+		assertTrue(grafo1.ehDisjunto(grafo2), "Grafo 1 e Grafo 2 devem ser disjuntos");
+		assertFalse(grafo1.ehDisjunto(grafo3), "Grafo 1 e Grafo 3 não devem ser disjuntos");
+		assertTrue(grafo2.ehDisjunto(grafo3), "Grafo 2 e Grafo 3 devem ser disjuntos");
 	}
 }

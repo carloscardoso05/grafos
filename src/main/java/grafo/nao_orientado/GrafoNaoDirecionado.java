@@ -33,16 +33,17 @@ public abstract class GrafoNaoDirecionado extends Grafo {
 	}
 
 	@Override
-	public final Aresta encontrarAresta(Vertice origem, Vertice destino) {
-		checkNotNull(origem, MSG_VERTICE_NULO);
-		checkNotNull(destino, MSG_VERTICE_NULO);
-
+	public final Set<Aresta> encontrarArestas(Vertice origem, Vertice destino) {
 		return getArestas()
 				.stream()
 				.filter(aresta -> (aresta.origem().equals(origem) && aresta.destino().equals(destino)) ||
 						(aresta.origem().equals(destino) && aresta.destino().equals(origem)))
-				.findFirst()
-				.orElse(null);
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public final Aresta encontrarAresta(Vertice origem, Vertice destino) {
+		return encontrarArestas(origem, destino).stream().findFirst().orElse(null);
 	}
 
 	public final GrafoNaoDirecionado uniao(GrafoNaoDirecionado outroGrafo) {

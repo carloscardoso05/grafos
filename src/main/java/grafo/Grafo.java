@@ -3,8 +3,9 @@ package grafo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -184,13 +185,33 @@ public abstract class Grafo {
 	 * @param vertice
 	 * @return lista de vértices vizinhos do vértice informado
 	 */
-	public final Set<Vertice> getVizinhos(Vertice vertice) {
+	public final Set<Vertice> getAdjacentes(Vertice vertice) {
 		checkNotNull(vertice, MSG_VERTICE_NULO);
 		checkArgument(existeVertice(vertice), MSG_VERTICE_NAO_EXISTE);
 
 		return getVertices()
 				.stream()
 				.filter(v -> existeAresta(vertice, v))
+				.collect(Collectors.toSet());
+	}
+
+	/**
+	 * Retorna um conjunto de vértices que estão conectados ao vértice informado.
+	 * <br>
+	 * São considerados vértices conectados aqueles que possuem pelo menos uma
+	 * aresta conectando-os ao vértice informado, como (vertice -> vizinho) ou
+	 * (vizinho -> vertice).
+	 *
+	 * @param vertice
+	 * @return conjunto de vértices conectados ao vértice informado
+	 */
+	public final Set<Vertice> getConectados(Vertice vertice) {
+		checkNotNull(vertice, MSG_VERTICE_NULO);
+		checkArgument(existeVertice(vertice), MSG_VERTICE_NAO_EXISTE);
+
+		return getVertices()
+				.stream()
+				.filter(v -> existeAresta(vertice, v) || existeAresta(v, vertice))
 				.collect(Collectors.toSet());
 	}
 
@@ -256,14 +277,23 @@ public abstract class Grafo {
 		Set<Vertice> visitados = new HashSet<>();
 		int componentes = 0;
 
-		for (Vertice vertice : getVertices()) {
-			if (!visitados.contains(vertice)) {
+		for (Vertice v : getVertices()) {
+			if (!visitados.contains(v)) {
 				componentes++;
-				visitados.add(vertice);
-				visitados.addAll(getVizinhos(vertice));
+				Deque<Vertice> fila = new ArrayDeque<>();
+				fila.add(v);
+				visitados.add(v);
+
+				while (!fila.isEmpty()) {
+					Vertice atual = fila.removeFirst();
+					for (Vertice vizinho : getConectados(atual)) {
+						if (visitados.add(vizinho)) {
+							fila.add(vizinho);
+						}
+					}
+				}
 			}
 		}
-
 		return componentes;
 	}
 
@@ -278,7 +308,7 @@ public abstract class Grafo {
 		Grafo grafoSemAresta = clonar();
 		grafoSemAresta.removeAresta(aresta.label());
 
-		return grafoSemAresta.ehConexo();
+		return !grafoSemAresta.ehConexo();
 	}
 
 	public final boolean ehDisjunto(Grafo outroGrafo) {

@@ -37,20 +37,19 @@ public class Fleury {
         int qtdArestas = grafo.getArestas().size();
         while (caminhoEuleriano.size() < qtdArestas) {
             Aresta aresta = escolheAresta();
-            verticeAtual = aresta.destino();
+            verticeAtual = verticeAtual != aresta.destino() ? aresta.destino() : aresta.origem();
             caminhoEuleriano.add(aresta);
         }
     }
 
     private Aresta escolheAresta() {
-        var vizinhos = grafo.getVizinhos(verticeAtual);
+        var vizinhos = grafo.getAdjacentes(verticeAtual);
         if (vizinhos.isEmpty()) {
             return null;
         }
         var arestasCandidatas = vizinhos
                 .stream()
                 .flatMap(v -> grafo.encontrarArestas(verticeAtual, v).stream())
-                // TODO consertar ehPonte
                 .filter(aresta -> !caminhoEuleriano.contains(aresta) && !grafo.ehPonte(aresta));
 
         return arestasCandidatas.findFirst().orElse(null);

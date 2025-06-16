@@ -171,6 +171,38 @@ public class GrafoTest {
 	}
 
 	@Test
+	void getConectadosTest() {
+		Vertice verticeA = grafo.addVertice(new Vertice("A"));
+		Vertice verticeB = grafo.addVertice(new Vertice("B"));
+		Vertice verticeC = grafo.addVertice(new Vertice("C"));
+		Vertice verticeD = grafo.addVertice(new Vertice("D"));
+
+		Aresta arestaAB = new Aresta("AB", verticeA, verticeB);
+		Aresta arestaBC = new Aresta("BC", verticeB, verticeC);
+		Aresta arestaCD = new Aresta("CD", verticeC, verticeD);
+		Aresta arestaDA = new Aresta("DA", verticeD, verticeA);
+		Aresta arestaAC1 = new Aresta("AC1", verticeA, verticeC);
+		Aresta arestaAC2 = new Aresta("AC2", verticeA, verticeC);
+
+
+		grafo.addArestas(arestaAB, arestaBC, arestaCD, arestaDA, arestaAC1, arestaAC2);
+
+		Set<Vertice> conectadosA = grafo.getConectados(verticeA);
+		Set<Vertice> conectadosB = grafo.getConectados(verticeB);
+		Set<Vertice> conectadosC = grafo.getConectados(verticeC);
+		Set<Vertice> conectadosD = grafo.getConectados(verticeD);
+
+		assertEquals(Set.of(verticeB, verticeC, verticeD), conectadosA,
+				"Vértices conectados a A devem incluir B, C e D");
+		assertEquals(Set.of(verticeA, verticeC), conectadosB,
+				"Vértices conectados a B devem incluir A e C");
+		assertEquals(Set.of(verticeA, verticeB, verticeD), conectadosC,
+				"Vértices conectados a C devem incluir A, B e D");
+		assertEquals(Set.of(verticeA, verticeC), conectadosD,
+				"Vértices conectados a D devem incluir A e C");
+	}
+
+	@Test
 	void clonarTest() {
 		Vertice verticeA = new Vertice("A");
 		Vertice verticeB = new Vertice("B");
@@ -212,7 +244,7 @@ public class GrafoTest {
 
 		grafo1.addArestas(
 				new Aresta("AB", new Vertice("A"), new Vertice("B")),
-				new Aresta("BC", new Vertice("B"), new Vertice("C"))	
+				new Aresta("BC", new Vertice("B"), new Vertice("C"))
 		);
 
 		grafo2.addArestas(
@@ -228,5 +260,70 @@ public class GrafoTest {
 		assertTrue(grafo1.ehDisjunto(grafo2), "Grafo 1 e Grafo 2 devem ser disjuntos");
 		assertFalse(grafo1.ehDisjunto(grafo3), "Grafo 1 e Grafo 3 não devem ser disjuntos");
 		assertTrue(grafo2.ehDisjunto(grafo3), "Grafo 2 e Grafo 3 devem ser disjuntos");
+	}
+
+	@Test
+	void ehConexoTest() {
+		Grafo grafoConexo = grafo.clonar();
+		Grafo grafoNaoConexo = grafo.clonar();
+		Grafo grafoNaoConexo2 = grafo.clonar();
+
+		grafoConexo.addArestas(
+				new Aresta("AB", new Vertice("A"), new Vertice("B")),
+				new Aresta("BC", new Vertice("B"), new Vertice("C")),
+				new Aresta("CA", new Vertice("C"), new Vertice("A"))
+		);
+
+		grafoNaoConexo.addArestas(
+				new Aresta("AB", new Vertice("A"), new Vertice("B")),
+				new Aresta("CD", new Vertice("C"), new Vertice("D"))
+		);
+
+		grafoNaoConexo2.addArestas(
+				new Aresta("AB", new Vertice("A"), new Vertice("B"))
+		);
+		grafoNaoConexo2.addVertices(new Vertice("C"));
+
+		assertTrue(grafoConexo.ehConexo(), "Grafo conexo deve ser conexo");
+		assertFalse(grafoNaoConexo.ehConexo(), "Grafo não conexo não deve ser conexo");
+		assertFalse(grafoNaoConexo2.ehConexo(), "Grafo não conexo 2 não deve ser conexo");
+	}
+
+	@Test
+	void ehPonteTest() {
+		Aresta arestaAB1 = new Aresta("AB1", new Vertice("A"), new Vertice("B"));
+		Aresta arestaAB2 = new Aresta("AB2", new Vertice("A"), new Vertice("B"));
+		Aresta arestaBC = new Aresta("BC", new Vertice("B"), new Vertice("C"));
+
+		grafo.addArestas(arestaAB1, arestaAB2, arestaBC);
+
+		assertFalse(grafo.ehPonte(arestaAB1), "A aresta AB1 não deve ser uma ponte, pois há outra aresta AB2");
+		assertFalse(grafo.ehPonte(arestaAB2), "A aresta AB2 não deve ser uma ponte, pois há outra aresta AB1");
+		assertTrue(grafo.ehPonte(arestaBC), "A aresta BC deve ser uma ponte, pois é a única entre B e C");
+	}
+
+	@Test
+	void ehPonte2Test() {
+		Vertice verticeA = grafo.addVertice(new Vertice("A"));
+		Vertice verticeB = grafo.addVertice(new Vertice("B"));
+		Vertice verticeC = grafo.addVertice(new Vertice("C"));
+		Vertice verticeD = grafo.addVertice(new Vertice("D"));
+
+		Aresta arestaAB = new Aresta("AB", verticeA, verticeB);
+		Aresta arestaBC = new Aresta("BC", verticeB, verticeC);
+		Aresta arestaCD = new Aresta("CD", verticeC, verticeD);
+		Aresta arestaDA = new Aresta("DA", verticeD, verticeA);
+		Aresta arestaAC1 = new Aresta("AC1", verticeA, verticeC);
+		Aresta arestaAC2 = new Aresta("AC2", verticeA, verticeC);
+
+
+		grafo.addArestas(arestaAB, arestaBC, arestaCD, arestaDA, arestaAC1, arestaAC2);
+
+		assertFalse(grafo.ehPonte(arestaAB), "Aresta AB não deve ser uma ponte, pois há outras conexões");
+		assertFalse(grafo.ehPonte(arestaBC), "Aresta BC não deve ser uma ponte, pois há outras conexões");
+		assertFalse(grafo.ehPonte(arestaCD), "Aresta CD não deve ser uma ponte, pois há outras conexões");
+		assertFalse(grafo.ehPonte(arestaDA), "Aresta DA não deve ser uma ponte, pois há outras conexões");
+		assertFalse(grafo.ehPonte(arestaAC1), "Aresta AC1 não deve ser uma ponte, pois há outras conexões");
+		assertFalse(grafo.ehPonte(arestaAC2), "Aresta AC2 não deve ser uma ponte, pois há outras conexões");
 	}
 }

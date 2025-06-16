@@ -67,15 +67,6 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 	}
 
 	@Override
-	public Set<Aresta> encontrarArestas(Vertice origem, Vertice destino) {
-		return getArestas()
-				.stream()
-				.filter(aresta -> (aresta.origem().equals(origem) && aresta.destino().equals(destino)) ||
-						(aresta.origem().equals(destino) && aresta.destino().equals(origem)))
-				.collect(Collectors.toSet());
-	}
-
-	@Override
 	protected Grafo novaInstancia() {
 		return new GrafoNaoDirecionadoPorLista();
 	}

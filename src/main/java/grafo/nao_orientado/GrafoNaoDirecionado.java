@@ -15,9 +15,9 @@ public abstract class GrafoNaoDirecionado extends Grafo {
 	public final long getGrau(Vertice vertice) {
 		checkNotNull(vertice, MSG_VERTICE_NULO);
 		return getArestas().stream()
-				.flatMap(aresta -> List.of(aresta.destino(), aresta.origem()).stream())
-				.filter(vertice::equals)
-				.count();
+						   .flatMap(aresta -> List.of(aresta.destino(), aresta.origem()).stream())
+						   .filter(vertice::equals)
+						   .count();
 	}
 
 	@Override
@@ -30,15 +30,6 @@ public abstract class GrafoNaoDirecionado extends Grafo {
 	public final long getGrauDeSaida(Vertice vertice) {
 		checkNotNull(vertice, MSG_VERTICE_NULO);
 		return getGrau(vertice);
-	}
-
-	@Override
-	public final Set<Aresta> encontrarArestas(Vertice origem, Vertice destino) {
-		return getArestas()
-				.stream()
-				.filter(aresta -> (aresta.origem().equals(origem) && aresta.destino().equals(destino)) ||
-						(aresta.origem().equals(destino) && aresta.destino().equals(origem)))
-				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -62,8 +53,8 @@ public abstract class GrafoNaoDirecionado extends Grafo {
 
 	public final boolean ehSemiEuleriano() {
 		long verticesImpares = getVertices().stream()
-				.filter(vertice -> getGrau(vertice) % 2 != 0)
-				.count();
+											.filter(vertice -> getGrau(vertice) % 2 != 0)
+											.count();
 		return verticesImpares == 0 || verticesImpares == 2;
 	}
 

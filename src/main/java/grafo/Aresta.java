@@ -34,7 +34,7 @@ public record Aresta(String label, Vertice origem, Vertice destino, double peso)
 	 * <br>
 	 * Exemplo: A -> B é o mesmo sentido que A -> B. A -> B não é o mesmo sentido
 	 * que B -> A.
-	 * 
+	 *
 	 * @param outra
 	 * @return se as arestas têm o mesmo sentido
 	 * @see #mesmaDirecao(Aresta outra)
@@ -50,7 +50,7 @@ public record Aresta(String label, Vertice origem, Vertice destino, double peso)
 	 * destino for a origem da outra.
 	 * <br>
 	 * Exemplo: A -> B é inversa de B -> A.
-	 * 
+	 *
 	 * @param outra
 	 * @return se as arestas são inversas
 	 */
@@ -66,7 +66,7 @@ public record Aresta(String label, Vertice origem, Vertice destino, double peso)
 	 * se o sentido for o mesmo ou se forem inversas.
 	 * <br>
 	 * Exemplo: A -> B é a mesma direção que B -> A.
-	 * 
+	 *
 	 * @param outra
 	 * @return se as arestas têm a mesma direção
 	 * @see #mesmoSentido(Aresta outra)
@@ -91,7 +91,7 @@ public record Aresta(String label, Vertice origem, Vertice destino, double peso)
 	}
 
 	@Override
-	public final boolean equals(Object obj) {
+	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -105,7 +105,11 @@ public record Aresta(String label, Vertice origem, Vertice destino, double peso)
 	}
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		return label.hashCode();
+	}
+
+	public boolean conecta(Vertice origem, Vertice destino) {
+		return origem.equals(origem()) && destino.equals(destino()) || origem.equals(destino()) && destino.equals(origem());
 	}
 }

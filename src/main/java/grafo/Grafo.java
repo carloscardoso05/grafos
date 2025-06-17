@@ -6,8 +6,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
@@ -51,8 +53,8 @@ public abstract class Grafo {
 		checkNotNull(destino, MSG_VERTICE_NULO);
 
 		String[] labels = encontrarArestas(origem, destino).stream()
-				.map(Aresta::label)
-				.toArray(String[]::new);
+														   .map(Aresta::label)
+														   .toArray(String[]::new);
 		removeArestas(labels);
 	}
 
@@ -97,6 +99,14 @@ public abstract class Grafo {
 	 * @return um conjunto de arestas entre os vértices origem e destino
 	 */
 	public abstract Set<Aresta> encontrarArestas(Vertice origem, Vertice destino);
+
+	public Set<Aresta> encontrarArestas(Vertice origem) {
+		return getVertices()
+				.stream()
+				.map(destino -> encontrarArestas(origem, destino))
+				.flatMap(Set::stream)
+				.collect(Collectors.toSet());
+	}
 
 	@CanIgnoreReturnValue
 	public abstract Vertice addVertice(Vertice vertice);
@@ -333,14 +343,14 @@ public abstract class Grafo {
 				String.join(
 						", ",
 						getVertices().stream()
-								.map(Vertice::label)
-								.map(String::valueOf)
-								.toList()),
+									 .map(Vertice::label)
+									 .map(String::valueOf)
+									 .toList()),
 				String.join(
 						", ",
 						getArestas().stream()
-								.map(aresta -> "(%s, %s)".formatted(aresta.origem().label(), aresta.destino()
-										.label()))
-								.toList()));
+									.map(aresta -> "(%s, %s)".formatted(aresta.origem().label(), aresta.destino()
+																									   .label()))
+									.toList()));
 	}
 }

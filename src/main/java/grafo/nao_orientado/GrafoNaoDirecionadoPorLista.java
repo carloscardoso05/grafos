@@ -28,6 +28,25 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 	}
 
 	@Override
+	public Set<Aresta> encontrarArestas(Vertice origem, Vertice destino) {
+		checkNotNull(origem, MSG_VERTICE_NULO);
+		checkNotNull(destino, MSG_VERTICE_NULO);
+		checkArgument(existeVertice(origem), MSG_VERTICE_NAO_EXISTE);
+		checkArgument(existeVertice(destino), MSG_VERTICE_NAO_EXISTE);
+
+		Set<Aresta> arestas = new HashSet<>();
+		arestas.addAll(verticesAdjacencias.get(origem)
+										  .stream()
+										  .filter(aresta -> aresta.conecta(origem, destino))
+										  .toList());
+		arestas.addAll(verticesAdjacencias.get(destino)
+										  .stream()
+										  .filter(aresta -> aresta.conecta(origem, destino))
+										  .toList());
+		return arestas;
+	}
+
+	@Override
 	public Vertice addVertice(Vertice vertice) {
 		checkNotNull(vertice, MSG_VERTICE_NULO);
 		verticesAdjacencias.putIfAbsent(vertice, new ArrayList<>());
@@ -48,8 +67,8 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 	@Override
 	public Set<Aresta> getArestas() {
 		return verticesAdjacencias.values().stream()
-				.flatMap(List::stream)
-				.collect(Collectors.toSet());
+								  .flatMap(List::stream)
+								  .collect(Collectors.toSet());
 	}
 
 	@Override
@@ -70,4 +89,5 @@ public class GrafoNaoDirecionadoPorLista extends GrafoNaoDirecionado {
 	protected Grafo novaInstancia() {
 		return new GrafoNaoDirecionadoPorLista();
 	}
+
 }

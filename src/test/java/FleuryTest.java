@@ -1,6 +1,7 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import grafo.Aresta;
 import grafo.Vertice;
 import grafo.nao_orientado.GrafoNaoDirecionado;
-import grafo.util.Fleury;
+import grafo.algoritmos.Fleury;
 
 @ParameterizedClass
 @MethodSource("Provider#grafosNaoDirecionados")
@@ -41,6 +42,6 @@ public class FleuryTest {
 
         List<Aresta> caminho = (new Fleury(grafo, verticeA)).getCaminhoEuleriano();
 
-        assertEquals(grafo.getArestas().size(), caminho.size());
+        assertEquals(grafo.getArestas(), Set.copyOf(caminho));
     }
 }

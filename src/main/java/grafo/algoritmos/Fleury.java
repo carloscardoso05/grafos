@@ -1,4 +1,4 @@
-package grafo.util;
+package grafo.algoritmos;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;

@@ -1,7 +1,10 @@
 package grafo.algoritmos;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -32,10 +35,16 @@ public class BFS {
         
         bfsVisit(origem);
         
+        // Filtra os antecessores para remover valores nulos antes de criar o ImmutableMap
+        Map<Vertice, Vertice> antecessoresFiltrados = new HashMap<>();
+        antecessores.entrySet().stream()
+            .filter(entry -> entry.getValue() != null)
+            .forEach(entry -> antecessoresFiltrados.put(entry.getKey(), entry.getValue()));
+        
         resultado = new Resultado(
                 ImmutableMap.copyOf(cores),
                 ImmutableMap.copyOf(descobertos),
-                ImmutableMap.copyOf(antecessores),
+                ImmutableMap.copyOf(antecessoresFiltrados),
                 ImmutableMap.copyOf(distancias));
     }
 
@@ -63,6 +72,50 @@ public class BFS {
             
             cores.put(atual, Cor.PRETO);
         }
+    }
+
+    /**
+     * Retorna a distância (número de arestas) entre a origem e o vértice de destino.
+     * 
+     * @param destino o vértice de destino
+     * @return a distância entre origem e destino, ou -1 se não houver caminho
+     */
+    public int getDistanciaEntre(Vertice destino) {
+        Integer distancia = distancias.get(destino);
+        return (distancia == null || distancia == Integer.MAX_VALUE) ? -1 : distancia;
+    }
+
+    /**
+     * Reconstrói o caminho da origem até o vértice de destino.
+     * 
+     * @param destino o vértice de destino
+     * @return uma lista com o caminho da origem ao destino, ou lista vazia se não houver caminho
+     */
+    public List<Vertice> getCaminhoAte(Vertice destino) {
+        if (getDistanciaEntre(destino) == -1) {
+            return Collections.emptyList();
+        }
+
+        List<Vertice> caminho = new ArrayList<>();
+        Vertice atual = destino;
+        
+        while (atual != null) {
+            caminho.add(atual);
+            atual = antecessores.get(atual);
+        }
+        
+        Collections.reverse(caminho);
+        return caminho;
+    }
+
+    /**
+     * Verifica se existe um caminho da origem até o vértice de destino.
+     * 
+     * @param destino o vértice de destino
+     * @return true se existe caminho, false caso contrário
+     */
+    public boolean existeCaminhoAte(Vertice destino) {
+        return getDistanciaEntre(destino) != -1;
     }
 
     public Resultado getResultado() {
